@@ -22,10 +22,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return { title: "Page Not Found" };
   }
 
-  const [settings, page] = await Promise.all([
-    prisma.siteSettings.findUnique({ where: { id: "default" } }),
-    prisma.page.findUnique({ where: { slug: slug.toLowerCase() } }),
-  ]);
+  let settings = null;
+  let page = null;
+
+  try {
+    [settings, page] = await Promise.all([
+      prisma.siteSettings.findUnique({ where: { id: "default" } }).catch(() => null),
+      prisma.page.findUnique({ where: { slug: slug.toLowerCase() } }).catch(() => null),
+    ]);
+  } catch {
+    // Ignore error
+  }
 
   if (!page || !page.isActive) {
     return { title: "Page Not Found" };
@@ -59,18 +66,25 @@ export default async function DynamicExtraPage({ params }: PageProps) {
     notFound();
   }
 
-  const [settings, page] = await Promise.all([
-    prisma.siteSettings.findUnique({ where: { id: "default" } }),
-    prisma.page.findUnique({
-      where: { slug: normalizedSlug },
-      include: {
-        components: {
-          orderBy: { position: "asc" },
-          include: { link: true },
+  let settings = null;
+  let page = null;
+
+  try {
+    [settings, page] = await Promise.all([
+      prisma.siteSettings.findUnique({ where: { id: "default" } }).catch(() => null),
+      prisma.page.findUnique({
+        where: { slug: normalizedSlug },
+        include: {
+          components: {
+            orderBy: { position: "asc" },
+            include: { link: true },
+          },
         },
-      },
-    }),
-  ]);
+      }).catch(() => null),
+    ]);
+  } catch {
+    // Catch db query failure
+  }
 
   if (!page || !page.isActive) {
     notFound();
