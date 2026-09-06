@@ -1,0 +1,111 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String   @default("Admin")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model SiteSettings {
+  id                 String   @id @default("default")
+  brandName          String   @default("Mobin X")
+  username           String   @default("@mobinx")
+  bio                String   @default("Digital Creator • Tech Enthusiast • Gamer")
+  avatarUrl          String   @default("https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80")
+  logoUrl            String   @default("")
+  accentColor        String   @default("#6366f1")
+  glassIntensity     String   @default("medium")
+  cardStyle          String   @default("glass")
+  footerText         String   @default("© 2026 Mobin X. All rights reserved.")
+  announcementActive Boolean  @default(true)
+  announcementText   String   @default("🔥 Free Fire Top Up & New Proxy Servers Available!")
+  announcementUrl    String   @default("")
+  announcementIcon   String   @default("Flame")
+  seoTitle           String   @default("Mobin X — Official Hub & Links")
+  seoDescription     String   @default("Official digital hub of Mobin X. Access fast top ups, proxy servers, download links, tutorials, and social channels.")
+  ogImage            String   @default("")
+  updatedAt          DateTime @updatedAt
+}
+
+model Link {
+  id             String          @id @default(cuid())
+  title          String
+  description    String          @default("")
+  url            String
+  icon           String          @default("ExternalLink")
+  type           String          @default("standard") // standard, featured, social, download, video
+  category       String          @default("Service")  // Service, Social, Download, Video, Utility
+  badge          String          @default("")        // HOT, NEW, FAST, POPULAR
+  isActive       Boolean         @default(true)
+  order          Int             @default(0)
+  clickCount     Int             @default(0)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  pageComponents PageComponent[]
+  analytics      AnalyticsEvent[]
+}
+
+model Page {
+  id             String          @id @default(cuid())
+  name           String
+  slug           String          @unique
+  isMain         Boolean         @default(false)
+  title          String          @default("")
+  description    String          @default("")
+  isActive       Boolean         @default(true)
+  seoTitle       String          @default("")
+  seoDescription String          @default("")
+  ogImage        String          @default("")
+  viewsCount     Int             @default(0)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  components     PageComponent[]
+  analytics      AnalyticsEvent[]
+}
+
+model PageComponent {
+  id               String   @id @default(cuid())
+  pageId           String
+  page             Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  linkId           String?
+  link             Link?    @relation(fields: [linkId], references: [id], onDelete: SetNull)
+  componentType    String   @default("LINK_CARD") // LINK_CARD, FEATURED_LINK, SOCIAL_LINK, DOWNLOAD_LINK, VIDEO_LINK, SECTION_HEADING, ANNOUNCEMENT
+  position         Int      @default(0)
+  customTitle      String?
+  customDescription String?
+  customBadge      String?
+  headingText      String?
+  announcementText String?
+  announcementUrl  String?
+  isVisible        Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model AnalyticsEvent {
+  id         String   @id @default(cuid())
+  pageId     String?
+  page       Page?    @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  linkId     String?
+  link       Link?    @relation(fields: [linkId], references: [id], onDelete: SetNull)
+  eventType  String   // "PAGE_VIEW" | "LINK_CLICK"
+  referrer   String   @default("Direct")
+  utmSource  String   @default("")
+  utmMedium  String   @default("")
+  utmCampaign String  @default("")
+  deviceType String   @default("Mobile") // Mobile | Tablet | Desktop
+  browser    String   @default("Chrome")
+  country    String   @default("Global")
+  ipHash     String   @default("")
+  timestamp  DateTime @default(now())
+}

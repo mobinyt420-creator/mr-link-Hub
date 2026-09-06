@@ -1,9 +1,10 @@
 import React from "react";
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
+import { RESERVED_SLUGS } from "@/lib/validation";
 import BackgroundGlow from "@/components/public/BackgroundGlow";
 import ProfileHeader from "@/components/public/ProfileHeader";
-import Announcement from "@/components/public/Announcement";
 import ComponentRenderer from "@/components/public/ComponentRenderer";
 import PublicFooter from "@/components/public/PublicFooter";
 import AnalyticsTracker from "@/components/public/AnalyticsTracker";
@@ -11,20 +12,28 @@ import AnalyticsTracker from "@/components/public/AnalyticsTracker";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export async function generateMetadata(): Promise<Metadata> {
-  const settings = await prisma.siteSettings.findUnique({
-    where: { id: "default" },
-  });
+interface PageProps {
+  params: Promise<{ slug: string }>;
+}
 
-  const mainPage = await prisma.page.findFirst({
-    where: { isMain: true },
-  });
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  if (RESERVED_SLUGS.has(slug.toLowerCase())) {
+    return { title: "Page Not Found" };
+  }
 
-  const title = mainPage?.seoTitle || settings?.seoTitle || `${settings?.brandName || "Mobin X"} — Official Hub`;
-  const description =
-    mainPage?.seoDescription ||
-    settings?.seoDescription ||
-    "Official digital hub and links.";
+  const [settings, page] = await Promise.all([
+    prisma.siteSettings.findUnique({ where: { id: "default" } }),
+    prisma.page.findUnique({ where: { slug: slug.toLowerCase() } }),
+  ]);
+
+  if (!page || !page.isActive) {
+    return { title: "Page Not Found" };
+  }
+
+  const title = page.seoTitle || `${page.name} — ${settings?.brandName || "Mobin X"}`;
+  const description = page.seoDescription || page.description || settings?.seoDescription || "";
+  const ogImage = page.ogImage || settings?.ogImage || "";
 
   return {
     title,
@@ -32,7 +41,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title,
       description,
-      images: settings?.ogImage ? [{ url: settings.ogImage }] : [],
+      images: ogImage ? [{ url: ogImage }] : [],
     },
     twitter: {
       card: "summary_large_image",
@@ -42,11 +51,18 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function MainPage() {
-  const [settings, mainPage] = await Promise.all([
+export default async function DynamicExtraPage({ params }: PageProps) {
+  const { slug } = await params;
+  const normalizedSlug = slug.toLowerCase();
+
+  if (RESERVED_SLUGS.has(normalizedSlug)) {
+    notFound();
+  }
+
+  const [settings, page] = await Promise.all([
     prisma.siteSettings.findUnique({ where: { id: "default" } }),
-    prisma.page.findFirst({
-      where: { isMain: true },
+    prisma.page.findUnique({
+      where: { slug: normalizedSlug },
       include: {
         components: {
           orderBy: { position: "asc" },
@@ -56,42 +72,40 @@ export default async function MainPage() {
     }),
   ]);
 
+  if (!page || !page.isActive) {
+    notFound();
+  }
+
   const brandName = settings?.brandName || "Mobin X";
   const username = settings?.username || "@mobinx";
-  const bio = settings?.bio || "Official Central Hub";
   const avatarUrl = settings?.avatarUrl || "";
   const accentColor = settings?.accentColor || "#6366f1";
 
-  // Filter active components
-  const activeComponents = (mainPage?.components || []).filter(
+  // Filter out invisible components or inactive links before sending to client
+  const activeComponents = (page.components || []).filter(
     (c) => c.isVisible && (!c.link || c.link.isActive)
   );
 
   return (
     <main className="min-h-screen flex flex-col relative selection:bg-indigo-500 selection:text-white">
       <BackgroundGlow accentColor={accentColor} />
-      {mainPage && <AnalyticsTracker pageId={mainPage.id} />}
+      <AnalyticsTracker pageId={page.id} />
 
       <ProfileHeader
         brandName={brandName}
         username={username}
-        bio={bio}
+        bio={settings?.bio || ""}
         avatarUrl={avatarUrl}
+        isExtraPage={true}
+        pageTitle={page.title || page.name}
+        pageDescription={page.description}
         accentColor={accentColor}
       />
-
-      {settings?.announcementActive && (
-        <Announcement
-          text={settings.announcementText}
-          url={settings.announcementUrl}
-          icon={settings.announcementIcon}
-        />
-      )}
 
       <div className="flex-1 w-full max-w-lg mx-auto">
         <ComponentRenderer
           components={activeComponents}
-          pageId={mainPage?.id || ""}
+          pageId={page.id}
           accentColor={accentColor}
         />
       </div>
