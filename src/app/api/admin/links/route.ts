@@ -30,6 +30,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Title and URL are required." }, { status: 400 });
     }
 
+    const count = await prisma.link.count();
+
     const link = await prisma.link.create({
       data: {
         title,
@@ -40,9 +42,44 @@ export async function POST(request: NextRequest) {
         category: category || "Service",
         badge: badge || "",
         isActive: isActive !== false,
-        order: order || 0,
+        order: order !== undefined ? order : count,
       },
     });
+
+    // Auto-attach to active bio page so it displays immediately on the public page
+    try {
+      const defaultPage = await prisma.page.findFirst({
+        where: { isActive: true },
+        orderBy: { createdAt: "asc" },
+      });
+
+      if (defaultPage) {
+        const compCount = await prisma.pageComponent.count({
+          where: { pageId: defaultPage.id },
+        });
+
+        const componentType =
+          type === "featured"
+            ? "FEATURED_LINK"
+            : type === "download"
+            ? "DOWNLOAD_LINK"
+            : type === "social"
+            ? "SOCIAL_LINK"
+            : "LINK_CARD";
+
+        await prisma.pageComponent.create({
+          data: {
+            pageId: defaultPage.id,
+            linkId: link.id,
+            componentType,
+            position: compCount,
+            isVisible: true,
+          },
+        });
+      }
+    } catch (attachErr) {
+      console.warn("Auto page-component attach notice:", attachErr);
+    }
 
     return NextResponse.json({ link }, { status: 201 });
   } catch (error) {
