@@ -3,14 +3,15 @@ import { getFirestore } from "firebase/firestore";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, User as FirebaseUser } from "firebase/auth";
 import { getAnalytics, isSupported, Analytics } from "firebase/analytics";
 
-// Official Firebase Configuration for mister-linkhub-app
+// Firebase Configuration for mr-linkhub
 export const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyDVS6ViOQa1q79tMCMv8HGOsap0_5_o_BU",
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "mister-linkhub-app.firebaseapp.com",
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "mister-linkhub-app",
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "mister-linkhub-app.firebasestorage.app",
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "1096842122292",
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "1:1096842122292:web:08b2bdd531ede1f866e661",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyCTyfCaMy7iFJuxWVDH4whS-LOmpE6lGdM",
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "mr-linkhub.firebaseapp.com",
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "mr-linkhub",
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "mr-linkhub.firebasestorage.app",
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "591212086930",
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "1:591212086930:web:13c3884cc19647e106c84b",
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID || "G-GQZ6H7CG6S",
 };
 
 // Initialize Firebase App (Singleton for Next.js App Router)
