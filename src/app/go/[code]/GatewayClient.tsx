@@ -23,6 +23,9 @@ import {
   FileCheck,
   ShieldCheck,
   Download,
+  Flame,
+  TrendingUp,
+  Layers,
 } from "lucide-react";
 
 interface ArticleData {
@@ -35,12 +38,24 @@ interface ArticleData {
   coverImage: string;
 }
 
+interface RelatedArticle {
+  id: string;
+  title: string;
+  excerpt: string;
+  category: string;
+  author: string;
+  readTime: number;
+  coverImage: string;
+  slug: string;
+}
+
 interface GatewayClientProps {
   shortCode: string;
   shortLinkId: string;
   targetUrl: string;
   linkTitle: string;
   article: ArticleData | null;
+  moreArticles?: RelatedArticle[];
 }
 
 const STEP_1_COUNTDOWN = 10;
@@ -52,6 +67,7 @@ export default function GatewayClient({
   targetUrl,
   linkTitle,
   article,
+  moreArticles = [],
 }: GatewayClientProps) {
   // Step state (1 or 2)
   const [currentStep, setCurrentStep] = useState<1 | 2>(1);
@@ -186,6 +202,10 @@ export default function GatewayClient({
     targetDomain = parsed.hostname.replace("www.", "");
   } catch {}
 
+  // Slice articles for Step 1 and Step 2
+  const step1Articles = moreArticles.slice(0, 3);
+  const step2Articles = moreArticles.slice(3, 6);
+
   return (
     <div className="min-h-screen bg-[#06080d] text-slate-100 relative overflow-hidden flex flex-col justify-between">
       {/* Background ambient lighting */}
@@ -251,7 +271,10 @@ export default function GatewayClient({
           <div
             className="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-emerald-400 transition-all duration-500 ease-out"
             style={{
-              width: currentStep === 1 ? `${Math.min(50, (progressStep1 / 2))}%` : `${50 + (progressStep2 / 2)}%`,
+              width:
+                currentStep === 1
+                  ? `${Math.min(50, progressStep1 / 2)}%`
+                  : `${50 + progressStep2 / 2}%`,
             }}
           />
         </div>
@@ -260,7 +283,7 @@ export default function GatewayClient({
       {/* ═══════ MAIN WRAPPER ═══════ */}
       <main className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 py-6 w-full flex-1">
         {/* ═══════════════════════════════════════════════════
-            STEP 1: 10s Countdown + Scroll Prompt + Article + Ads
+            STEP 1: 10s Countdown + Multi-Article + Ads + Scroll
            ═══════════════════════════════════════════════════ */}
         {currentStep === 1 && (
           <div className="animate-fade-in-up">
@@ -343,8 +366,8 @@ export default function GatewayClient({
                     </h2>
                     <p className="text-xs text-slate-300 mt-1">
                       {isStep1Ready
-                        ? "নিচের দিকে স্ক্রল করে আর্টিকেলটি পড়ুন এবং ধাপ ২ বাটনে ক্লিক করুন।"
-                        : `অনুগ্রহ করে ${timeLeft1} সেকেন্ড অপেক্ষা করুন। নিচে আর্টিকেলটি পড়ুন।`}
+                        ? "নিচের দিকে স্ক্রল করে আর্টিকেলসমূহ পড়ুন এবং ধাপ ২ বাটনে ক্লিক করুন।"
+                        : `অনুগ্রহ করে ${timeLeft1} সেকেন্ড অপেক্ষা করুন। নিচে আর্টিকেলসমূহ পড়ুন।`}
                     </p>
                   </div>
                 </div>
@@ -363,13 +386,13 @@ export default function GatewayClient({
               <div className="mt-4 pt-4 border-t border-white/[0.06] flex items-center justify-between text-xs text-indigo-300 bg-indigo-500/[0.04] px-3 py-2 rounded-lg">
                 <span className="flex items-center gap-1.5">
                   <ArrowDownCircle className="w-4 h-4 text-indigo-400 animate-bounce" />
-                  <strong>নির্দেশনা:</strong> নিচে স্ক্রল করে সম্পূর্ণ আর্টিকেলটি দেখুন এবং পরবর্তী ধাপে যাওয়ার বাটন আনলক করুন।
+                  <strong>নির্দেশনা:</strong> নিচে স্ক্রল করে সম্পূর্ণ আর্টিকেলসমূহ দেখুন এবং পরবর্তী ধাপে যাওয়ার বাটন আনলক করুন।
                 </span>
                 <span className="text-[11px] font-mono text-slate-400 hidden sm:inline">ধাপ ১ / ২</span>
               </div>
             </div>
 
-            {/* Article Content Display */}
+            {/* Featured Article 1 */}
             {article && (
               <article className="mb-8 glass-card rounded-2xl p-6 sm:p-8 border border-white/[0.06]">
                 {/* Article Header */}
@@ -439,6 +462,64 @@ export default function GatewayClient({
               </article>
             )}
 
+            {/* ═══════ MULTI-ARTICLE SECTION (STEP 1) ═══════ */}
+            {step1Articles.length > 0 && (
+              <div className="mb-8 glass-card rounded-2xl p-6 border border-white/[0.06]">
+                <div className="flex items-center justify-between mb-4 pb-3 border-b border-white/[0.06]">
+                  <h3 className="text-base font-bold text-white flex items-center gap-2">
+                    <TrendingUp className="w-4 h-4 text-indigo-400" />
+                    আরও গুরুত্বপূর্ণ টেকনোলজি আর্টিকেল ও গাইড
+                  </h3>
+                  <span className="text-xs text-slate-400">AdSense Verified Content</span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {step1Articles.map((item) => (
+                    <div
+                      key={item.id}
+                      className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06] flex flex-col justify-between hover:border-indigo-500/30 transition-colors"
+                    >
+                      <div>
+                        {item.coverImage && (
+                          <div className="h-28 rounded-lg overflow-hidden mb-3 border border-white/[0.04]">
+                            <img
+                              src={item.coverImage}
+                              alt={item.title}
+                              className="w-full h-full object-cover"
+                              loading="lazy"
+                            />
+                          </div>
+                        )}
+                        <span className="px-2 py-0.5 rounded bg-indigo-500/10 text-[10px] font-semibold text-indigo-300">
+                          {item.category}
+                        </span>
+                        <h4 className="text-xs font-bold text-slate-200 mt-2 line-clamp-2">
+                          {item.title}
+                        </h4>
+                        <p className="text-[11px] text-slate-400 mt-1 line-clamp-2">
+                          {item.excerpt}
+                        </p>
+                      </div>
+                      <div className="text-[10px] text-slate-500 mt-3 pt-2 border-t border-white/[0.04] flex items-center justify-between">
+                        <span>{item.author}</span>
+                        <span>{item.readTime} min read</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Native In-Feed Ad Slot */}
+                <div className="mt-4 p-3 rounded-xl border border-dashed border-white/[0.08] bg-white/[0.02] text-center">
+                  <span className="text-[10px] text-slate-500 uppercase tracking-widest block mb-1">
+                    Google AdSense In-Feed Ad Unit
+                  </span>
+                  <div className="h-14 rounded-lg bg-slate-900/40 flex items-center justify-center text-xs text-indigo-300">
+                    ⚡ Supercharge your workflow with High-Speed Cloud SSD
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* ═══════ STEP 1 BOTTOM ACTION AREA ═══════ */}
             <div
               ref={bottomActionRef}
@@ -488,7 +569,7 @@ export default function GatewayClient({
         )}
 
         {/* ═══════════════════════════════════════════════════
-            STEP 2: 5s Verification + Video Ad + Final Download
+            STEP 2: 5s Verification + Video Ad + Multi-Articles + Final Download
            ═══════════════════════════════════════════════════ */}
         {currentStep === 2 && (
           <div className="animate-fade-in-up">
@@ -545,6 +626,34 @@ export default function GatewayClient({
                 </div>
               </div>
             </div>
+
+            {/* ═══════ MULTI-ARTICLE / SECURITY READS (STEP 2) ═══════ */}
+            {step2Articles.length > 0 && (
+              <div className="mb-6 glass-card rounded-2xl p-6 border border-white/[0.06]">
+                <h3 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
+                  <Layers className="w-4 h-4 text-emerald-400" />
+                  সিকিউরিটি ও ডাউনলোড গাইডলাইন
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  {step2Articles.map((item) => (
+                    <div
+                      key={item.id}
+                      className="p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.06] text-left"
+                    >
+                      <span className="text-[9px] uppercase font-bold text-emerald-400">
+                        {item.category}
+                      </span>
+                      <h5 className="text-xs font-semibold text-slate-200 mt-1 line-clamp-1">
+                        {item.title}
+                      </h5>
+                      <p className="text-[11px] text-slate-400 mt-1 line-clamp-2">
+                        {item.excerpt}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* 5-Second Rapid Countdown & Security Badges */}
             <div className="glass-card rounded-2xl p-6 sm:p-8 mb-6 border border-indigo-500/20 bg-gradient-to-b from-indigo-950/20 to-slate-900/60">

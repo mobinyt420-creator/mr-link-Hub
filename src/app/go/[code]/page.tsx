@@ -27,16 +27,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       });
     }
   } catch {
-    // DB error fallback
+    // DB fallback
   }
 
   if (!shortLink || !shortLink.isActive) {
-    return { title: "Link Not Found — LinkHub" };
+    return { title: "Link Not Found — LinkHub SafeLink" };
   }
 
   return {
-    title: article?.title || "LinkHub — Premium Content",
-    description: article?.excerpt || "Read the latest insights on technology, programming, and digital innovation.",
+    title: `${article?.title || "Secure Download"} — LinkHub SafeLink`,
+    description: article?.excerpt || "Read the latest tech insights, guides, and download your verified file.",
   };
 }
 
@@ -44,18 +44,42 @@ export default async function GatewayPage({ params }: PageProps) {
   const { code } = await params;
 
   let shortLink = null;
-  let article = null;
+  let mainArticle = null;
+  let moreArticles: Array<{
+    id: string;
+    title: string;
+    excerpt: string;
+    category: string;
+    author: string;
+    readTime: number;
+    coverImage: string;
+    slug: string;
+  }> = [];
 
   try {
     shortLink = await prisma.shortLink.findUnique({ where: { code } });
 
     if (shortLink && shortLink.isActive) {
-      const count = await prisma.article.count({ where: { isPublished: true } });
-      const skip = Math.floor(Math.random() * count);
-      article = await prisma.article.findFirst({
+      // Fetch 6 published articles
+      const allArticles = await prisma.article.findMany({
         where: { isPublished: true },
-        skip,
+        take: 8,
+        orderBy: { createdAt: "desc" },
       });
+
+      if (allArticles.length > 0) {
+        mainArticle = allArticles[0];
+        moreArticles = allArticles.slice(1).map((a) => ({
+          id: a.id,
+          title: a.title,
+          excerpt: a.excerpt,
+          category: a.category,
+          author: a.author,
+          readTime: a.readTime,
+          coverImage: a.coverImage,
+          slug: a.slug,
+        }));
+      }
     }
   } catch {
     // DB error fallback
@@ -72,18 +96,19 @@ export default async function GatewayPage({ params }: PageProps) {
       targetUrl={shortLink.targetUrl}
       linkTitle={shortLink.title}
       article={
-        article
+        mainArticle
           ? {
-              id: article.id,
-              title: article.title,
-              content: article.content,
-              category: article.category,
-              author: article.author,
-              readTime: article.readTime,
-              coverImage: article.coverImage,
+              id: mainArticle.id,
+              title: mainArticle.title,
+              content: mainArticle.content,
+              category: mainArticle.category,
+              author: mainArticle.author,
+              readTime: mainArticle.readTime,
+              coverImage: mainArticle.coverImage,
             }
           : null
       }
+      moreArticles={moreArticles}
     />
   );
 }
