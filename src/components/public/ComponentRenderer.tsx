@@ -41,6 +41,7 @@ function detectBrand(title: string, icon: string): string {
   if (t.includes("telegram") || ic.includes("telegram") || ic.includes("send")) return "telegram";
   if (t.includes("youtube") || ic.includes("youtube")) return "youtube";
   if (t.includes("whatsapp") || ic.includes("whatsapp") || ic.includes("messagecircle")) return "whatsapp";
+  if (t.includes("facebook") || ic.includes("facebook")) return "facebook";
   if (t.includes("top up") || t.includes("topup") || t.includes("diamond") || ic.includes("diamond")) return "diamond";
   if (t.includes("download") || t.includes("apk") || ic.includes("download")) return "download";
   return "default";
@@ -57,38 +58,43 @@ function getIconContainerClass(brand: string): string {
   }
 }
 
-// ─── Action button configuration by brand ───
-function getButtonConfig(brand: string, compType: string) {
+// ─── Action button — ALWAYS filled with brand color (mobile-first, no hover-only) ───
+function getButtonConfig(brand: string) {
   switch (brand) {
     case "telegram":
       return {
         label: "Join",
-        classes: "bg-[#229ED9]/15 text-[#56bfee] border-[#229ED9]/25 hover:bg-[#229ED9] hover:text-white hover:border-[#229ED9]",
+        classes: "bg-[#229ED9] text-white border-[#229ED9] shadow-md shadow-[#229ED9]/25",
       };
     case "youtube":
       return {
         label: "Subscribe",
-        classes: "bg-[#FF0000]/12 text-[#ff6b6b] border-[#FF0000]/25 hover:bg-[#FF0000] hover:text-white hover:border-[#FF0000]",
+        classes: "bg-[#FF0000] text-white border-[#FF0000] shadow-md shadow-[#FF0000]/25",
       };
     case "whatsapp":
       return {
         label: "Chat",
-        classes: "bg-[#25D366]/12 text-[#5ee89c] border-[#25D366]/25 hover:bg-[#25D366] hover:text-white hover:border-[#25D366]",
+        classes: "bg-[#25D366] text-white border-[#25D366] shadow-md shadow-[#25D366]/25",
+      };
+    case "facebook":
+      return {
+        label: "Follow",
+        classes: "bg-[#1877F2] text-white border-[#1877F2] shadow-md shadow-[#1877F2]/25",
       };
     case "diamond":
       return {
         label: "Top Up",
-        classes: "bg-gradient-to-r from-blue-600/90 to-indigo-600/90 text-white border-blue-500/30 shadow-sm shadow-blue-500/20",
+        classes: "bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-blue-500/30 shadow-md shadow-blue-500/25",
       };
     case "download":
       return {
         label: "Download",
-        classes: "bg-emerald-500/12 text-emerald-300 border-emerald-500/25 hover:bg-emerald-500 hover:text-white hover:border-emerald-500",
+        classes: "bg-emerald-500 text-white border-emerald-500 shadow-md shadow-emerald-500/25",
       };
     default:
       return {
         label: "Open",
-        classes: "bg-indigo-500/12 text-indigo-300 border-indigo-500/25 hover:bg-indigo-600 hover:text-white hover:border-indigo-600",
+        classes: "bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-500/25",
       };
   }
 }
@@ -140,20 +146,17 @@ export default function ComponentRenderer({
     );
   }
 
-  // Track visible card index for staggered animation delay
   let cardIndex = 0;
 
   return (
     <div className="flex flex-col gap-3 w-full max-w-lg mx-auto px-4 pb-12">
       {visibleComponents.map((comp) => {
         const title = comp.customTitle || comp.link?.title || "";
-        const description = comp.customDescription || comp.link?.description || "";
-        const badge = comp.customBadge || comp.link?.badge || "";
         const url = comp.link?.url || "#";
         const icon = comp.link?.icon || "ExternalLink";
         const linkId = comp.link?.id;
 
-        // 1. SECTION HEADING
+        // SECTION HEADING — optional divider (admin can choose to add)
         if (comp.componentType === "SECTION_HEADING") {
           return (
             <div
@@ -162,16 +165,16 @@ export default function ComponentRenderer({
               style={{ animationDelay: `${cardIndex++ * 60}ms` }}
             >
               <div className="flex items-center gap-3">
-                <h3 className="text-[10.5px] font-extrabold tracking-[0.15em] text-slate-500 uppercase">
+                <h3 className="text-[10.5px] font-extrabold tracking-[0.16em] text-slate-500 uppercase whitespace-nowrap">
                   {comp.headingText || "Links"}
                 </h3>
-                <div className="flex-1 h-[1px] bg-gradient-to-r from-white/15 via-white/5 to-transparent" />
+                <div className="flex-1 h-[1px] bg-gradient-to-r from-white/12 via-indigo-500/10 to-transparent" />
               </div>
             </div>
           );
         }
 
-        // 2. IN-PAGE ANNOUNCEMENT
+        // IN-PAGE ANNOUNCEMENT
         if (comp.componentType === "ANNOUNCEMENT") {
           return (
             <div
@@ -198,14 +201,17 @@ export default function ComponentRenderer({
           );
         }
 
+        // Skip if no link attached
+        if (!comp.link) return null;
+
         // Detect brand & get configs
         const brand = detectBrand(title, icon);
-        const btnConfig = getButtonConfig(brand, comp.componentType);
+        const btnConfig = getButtonConfig(brand);
         const iconContainerClass = getIconContainerClass(brand);
         const isFeatured = comp.componentType === "FEATURED_LINK";
         const currentIndex = cardIndex++;
 
-        // UNIFIED PREMIUM CARD
+        // CLEAN PREMIUM CARD — title only, no description, no badge
         return (
           <a
             key={comp.id}
@@ -229,43 +235,26 @@ export default function ComponentRenderer({
             }}
           >
             <div
-              className={`flex items-center justify-between p-3.5 sm:p-4 rounded-2xl min-h-[56px] ${
+              className={`flex items-center justify-between p-3.5 sm:p-4 rounded-2xl ${
                 isFeatured
                   ? "bg-slate-950/[0.93] backdrop-blur-[60px]"
                   : ""
               }`}
             >
-              {/* Left: Icon Container + Text */}
+              {/* Left: Icon + Title only */}
               <div className="flex items-center gap-3.5 min-w-0 flex-1">
-                {/* Brand-tinted icon container */}
                 <div className={`${iconContainerClass} group-hover:scale-[1.06]`}>
                   <DynamicIcon name={icon} className="w-[28px] h-[28px]" size={28} />
                 </div>
-
-                {/* Title & Description */}
-                <div className="min-w-0 flex-1 text-left">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <span className="font-bold text-[15px] text-white tracking-tight truncate group-hover:text-indigo-200 transition-colors duration-200">
-                      {title}
-                    </span>
-                    {badge && (
-                      <span className="text-[9px] font-extrabold uppercase px-1.5 py-[2px] rounded-md bg-indigo-500/15 text-indigo-300/80 border border-indigo-500/20 flex-shrink-0 tracking-wide">
-                        {badge}
-                      </span>
-                    )}
-                  </div>
-                  {description && (
-                    <p className="text-[12px] text-slate-400 line-clamp-1 leading-snug">
-                      {description}
-                    </p>
-                  )}
-                </div>
+                <span className="font-bold text-[15px] text-white tracking-tight truncate group-hover:text-indigo-200 transition-colors duration-200">
+                  {title}
+                </span>
               </div>
 
-              {/* Right: Action Pill Button */}
+              {/* Right: Always-colored brand action button — UNIFORM SIZE */}
               <div className="ml-3 flex-shrink-0">
                 <div
-                  className={`flex items-center gap-1 px-3.5 py-[6px] rounded-xl border text-[11px] font-bold tracking-wide transition-all duration-200 active:scale-95 ${btnConfig.classes}`}
+                  className={`flex items-center justify-center gap-1 min-w-[90px] px-3 py-[7px] rounded-xl border text-[11px] font-bold tracking-wide transition-all duration-200 active:scale-95 ${btnConfig.classes}`}
                 >
                   <span>{btnConfig.label}</span>
                   <ArrowUpRight className="w-3 h-3" />

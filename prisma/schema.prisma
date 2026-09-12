@@ -110,3 +110,49 @@ model AnalyticsEvent {
   ipHash     String   @default("")
   timestamp  DateTime @default(now())
 }
+
+// ─── Monetization Gateway Models ───
+
+model Article {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  title         String
+  excerpt       String   @default("")
+  content       String   // Full article body (HTML or markdown)
+  category      String   @default("Technology")
+  coverImage    String   @default("")
+  author        String   @default("LinkHub Editorial")
+  readTime      Int      @default(5) // minutes
+  isPublished   Boolean  @default(true)
+  viewCount     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model ShortLink {
+  id            String        @id @default(cuid())
+  code          String        @unique // 6-char unique code
+  title         String        @default("")
+  targetUrl     String        // The actual destination URL
+  clickCount    Int           @default(0)
+  uniqueClicks  Int           @default(0)
+  earnings      Float         @default(0.0) // Estimated earnings in BDT
+  isActive      Boolean       @default(true)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  views         GatewayView[]
+}
+
+model GatewayView {
+  id            String    @id @default(cuid())
+  shortLinkId   String
+  shortLink     ShortLink @relation(fields: [shortLinkId], references: [id], onDelete: Cascade)
+  articleId     String?
+  ipHash        String    @default("")
+  deviceType    String    @default("Mobile")
+  browser       String    @default("Chrome")
+  country       String    @default("BD")
+  referrer      String    @default("Direct")
+  completed     Boolean   @default(false) // Did user click "Continue"?
+  timestamp     DateTime  @default(now())
+}

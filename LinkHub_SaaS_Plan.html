@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LinkHub — Complete SaaS Business Plan & Roadmap</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #07090e;
+      --card-bg: rgba(18, 24, 38, 0.75);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --primary: #6366f1;
+      --primary-glow: rgba(99, 102, 241, 0.25);
+      --accent-cyan: #06b6d4;
+      --accent-green: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 20% 10%, rgba(99, 102, 241, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 80% 80%, rgba(6, 182, 212, 0.08) 0%, transparent 40%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', 'Hind Siliguri', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.65;
+      padding: 20px 16px 80px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* Top Navigation Bar */
+    .top-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 18px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      backdrop-filter: blur(12px);
+      margin-bottom: 24px;
+      position: sticky;
+      top: 12px;
+      z-index: 100;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+
+    .logo-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: -0.3px;
+    }
+
+    .logo-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #6366f1, #06b6d4);
+      display: grid;
+      place-items: center;
+      font-size: 14px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn {
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 8px;
+      border: 1px solid var(--card-border);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      border-color: transparent;
+      box-shadow: 0 4px 14px var(--primary-glow);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #4f46e5, #4338ca);
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      padding: 30px 10px 40px;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #10b981;
+    }
+
+    h1 {
+      font-size: clamp(26px, 5vw, 40px);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #ffffff 40%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      font-size: clamp(14px, 2.5vw, 17px);
+      color: var(--text-muted);
+      max-width: 650px;
+      margin: 0 auto;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: clamp(18px, 4vw, 28px);
+      margin-bottom: 22px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.4);
+      transition: border-color 0.2s;
+    }
+
+    .card:hover {
+      border-color: rgba(255, 255, 255, 0.14);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .card-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      font-size: 20px;
+      background: rgba(99, 102, 241, 0.15);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      color: #a5b4fc;
+      flex-shrink: 0;
+    }
+
+    h2 {
+      font-size: clamp(18px, 3.5vw, 22px);
+      font-weight: 700;
+      color: #fff;
+    }
+
+    h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #e2e8f0;
+      margin: 18px 0 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    p {
+      color: var(--text-muted);
+      font-size: 14.5px;
+      margin-bottom: 12px;
+    }
+
+    /* Tables */
+    .table-wrapper {
+      overflow-x: auto;
+      margin: 14px 0 20px;
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+      -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13.5px;
+      min-width: 520px;
+    }
+
+    th {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-muted);
+      font-weight: 600;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--card-border);
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+    }
+
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: #cbd5e1;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    /* Pricing Grid */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .plan-card {
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 20px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .plan-card.highlight {
+      border-color: var(--primary);
+      background: linear-gradient(180deg, rgba(99, 102, 241, 0.08) 0%, rgba(15, 23, 42, 0.6) 100%);
+      box-shadow: 0 0 30px -10px var(--primary-glow);
+    }
+
+    .plan-badge {
+      position: absolute;
+      top: -10px;
+      right: 16px;
+      background: var(--primary);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 999px;
+      letter-spacing: 0.5px;
+    }
+
+    .plan-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+
+    .plan-price {
+      font-size: 28px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 2px;
+    }
+
+    .plan-price span {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-dim);
+    }
+
+    .plan-local {
+      font-size: 12.5px;
+      color: var(--accent-cyan);
+      margin-bottom: 16px;
+      font-weight: 600;
+    }
+
+    .plan-features {
+      list-style: none;
+      margin-top: auto;
+      padding-top: 14px;
+      border-top: 1px solid var(--card-border);
+    }
+
+    .plan-features li {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .plan-features li::before {
+      content: "✓";
+      color: var(--accent-green);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* Badges & Pills */
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.08);
+      color: #cbd5e1;
+    }
+    .badge-primary { background: rgba(99, 102, 241, 0.2); color: #a5b4fc; }
+    .badge-green { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
+    .badge-cyan { background: rgba(6, 182, 212, 0.2); color: #67e8f9; }
+    .badge-amber { background: rgba(245, 158, 11, 0.2); color: #fcd34d; }
+
+    /* Alert Boxes */
+    .alert-box {
+      background: rgba(99, 102, 241, 0.08);
+      border-left: 3px solid var(--primary);
+      padding: 14px 18px;
+      border-radius: 0 12px 12px 0;
+      margin: 16px 0;
+    }
+    .alert-box strong {
+      color: #c7d2fe;
+    }
+
+    /* Checklist */
+    .checklist {
+      list-style: none;
+      margin: 12px 0;
+    }
+    .checklist li {
+      padding: 10px 12px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 10px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      color: #e2e8f0;
+    }
+    .check-box {
+      width: 18px;
+      height: 18px;
+      border-radius: 5px;
+      border: 1px solid #475569;
+      display: grid;
+      place-items: center;
+      font-size: 11px;
+      flex-shrink: 0;
+    }
+    .check-box.done {
+      background: var(--accent-green);
+      border-color: var(--accent-green);
+      color: #fff;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #10b981;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 14px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+      z-index: 999;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      margin-top: 50px;
+      color: var(--text-dim);
+      font-size: 13px;
+    }
+
+    @media print {
+      body {
+        background: #fff !important;
+        color: #000 !important;
+      }
+      .top-actions, .toast { display: none !important; }
+      .card {
+        border: 1px solid #ddd !important;
+        background: #fff !important;
+        color: #000 !important;
+        box-shadow: none !important;
+        break-inside: avoid;
+      }
+      h1, h2, h3, p, td, th { color: #000 !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Top Action Bar -->
+    <div class="top-actions">
+      <div class="logo-badge">
+        <div class="logo-icon">L</div>
+        <span>LinkHub SaaS Blueprint</span>
+      </div>
+      <div class="btn-group">
+        <button class="btn" onclick="window.print()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
+          PDF / Print
+        </button>
+        <button class="btn btn-primary" onclick="copyEntireDoc()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copy All
+        </button>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <header>
+      <div class="status-pill">
+        <div class="status-dot"></div>
+        <span>Phase 1 Verified & Ready for SaaS Scaling</span>
+      </div>
+      <h1>LinkHub Business & Product Plan</h1>
+      <p class="subtitle">
+        একক পেজ থেকে সম্পূর্ণ Multi-tenant Link-in-Bio SaaS প্ল্যাটফর্মে রূপান্তর করার পূর্ণাঙ্গ ব্যবসায়িক ও টেকনিক্যাল গাইডলাইন।
+      </p>
+    </header>
+
+    <!-- Section 1: Executive Summary -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">⚡</div>
+        <div>
+          <h2>১. সংক্ষেপে আমাদের প্রজেক্ট ও অবস্থান</h2>
+          <p style="margin:0; font-size:13px;">বর্তমান অবস্থা এবং মূল সম্ভাবনা</p>
+        </div>
+      </div>
+      <p>
+        আমরা ইতিমধ্যে <strong>LinkHub</strong>-এর একটি অত্যন্ত প্রফেশনাল, আধুনিক ও পারফরম্যান্ট ফাউন্ডেশন তৈরি করে ফেলেছি। এতে রয়েছে:
+      </p>
+      <ul class="checklist">
+        <li>
+          <div class="check-box done">✓</div>
+          <div><strong>Modern Glassmorphism UI:</strong> Linktree বা Beacons-এর চেয়েও প্রিমিয়াম লুকিং ডার্ক মোড ও ব্র্যান্ডেড প্ল্যাটফর্ম কালার স্কিম।</div>
+        </li>
+        <li>
+          <div class="check-box done">✓</div>
+          <div><strong>Dynamic Multi-Slug Pages:</strong> <code>/</code>, <code>/tiktok-01</code> ইত্যাদি আনলিমিটেড কাস্টম পেজ ম্যানেজমেন্ট।</div>
+        </li>
+        <li>
+          <div class="check-box done">✓</div>
+          <div><strong>Comprehensive Admin Dashboard:</strong> ড্র্যাগ/ক্লিক করে কম্পোনেন্ট সাজানো, স্ট্যাটিস্টিকস ও লিংক নিয়ন্ত্রণ।</div>
+        </li>
+        <li>
+          <div class="check-box done">✓</div>
+          <div><strong>Fast Tech Stack:</strong> Next.js App Router + TypeScript + TailwindCSS + Firebase/Edge Caching।</div>
+        </li>
+      </ul>
+      <div class="alert-box">
+        <strong>🎯 SaaS সম্ভাবনা:</strong> বাংলাদেশ ও দক্ষিণ এশিয়ায় কনটেন্ট ক্রিয়েটর, এফিলিয়েট মার্কেটার, ও গেমারদের (Free Fire, PUBG) জন্য কোনো ডেডিকেটেড লোকাল পেমেন্ট সাপোর্টেড Link-in-Bio টুল নেই। এটি একটি বিশাল ব্লু-ওশান (Blue Ocean) সুযোগ!
+      </div>
+    </div>
+
+    <!-- Section 2: Features Suggestions -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🔥</div>
+        <div>
+          <h2>২. যে ফিচারগুলো পরবর্তীতে যোগ করতে হবে</h2>
+          <p style="margin:0; font-size:13px;">ভবিষ্যতের হাই-কনভার্সন ফিচার তালিকা</p>
+        </div>
+      </div>
+
+      <h3>🔥 হাই প্রায়োরিটি (সবচেয়ে বেশি ইমপ্যাক্ট)</h3>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>ফিচার</th>
+              <th>কেন জরুরি?</th>
+              <th>প্রভাব</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>QR Code Generator</strong></td>
+              <td>TikTok/Reels ভিডিওর স্ক্রিনে অথবা অফলাইন কার্ডে দেখিয়ে ভিউয়ারদের সরাসরি প্রোফাইলে আনার জন্য।</td>
+              <td><span class="badge badge-green">High Conversion</span></td>
+            </tr>
+            <tr>
+              <td><strong>Advanced Analytics</strong></td>
+              <td>কোন দেশ/শহর (Geo), কোন ডিভাইস (Android/iOS), এবং প্রতিদিনের ক্লিক গ্রাফ চার্ট।</td>
+              <td><span class="badge badge-primary">SaaS Pro Feature</span></td>
+            </tr>
+            <tr>
+              <td><strong>Custom Domain Support</strong></td>
+              <td>ইউজাররা তাদের নিজস্ব ডোমেইন (যেমন <code>links.mr-mobin.com</code> বা <code>mobin.link</code>) কানেক্ট করতে পারবে।</td>
+              <td><span class="badge badge-cyan">Branding Boost</span></td>
+            </tr>
+            <tr>
+              <td><strong>Link Scheduling</strong></td>
+              <td>কোনো অফার বা ভিডিও লিংক নির্দিষ্ট তারিখে শুরু ও বন্ধ করার অটোমেশন।</td>
+              <td><span class="badge badge-amber">Convenience</span></td>
+            </tr>
+            <tr>
+              <td><strong>Dynamic OG Image / Social Preview</strong></td>
+              <td>WhatsApp/Facebook-এ পেজের লিংক শেয়ার করলে চমৎকার থাম্বনেইল ও প্রিভিউ ব্যানার তৈরি হওয়া।</td>
+              <td><span class="badge badge-primary">Viral Growth</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>⚡ মিডিয়াম প্রায়োরিটি (UX ও প্রিমিয়াম ফিল)</h3>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>ফিচার</th>
+              <th>বিবরণ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Theme Presets</strong></td>
+              <td>নিয়ন (Cyberpunk), মিনিমাল লাইট, গ্লসি গ্লাস ও রেট্রো থিম — ১ ক্লিকে পেজের লুক পরিবর্তন।</td>
+            </tr>
+            <tr>
+              <td><strong>Click Heatmap</strong></td>
+              <td>পেজের কোন বাটনে ভিজিটররা সবচেয়ে বেশি ক্লিক করে তা ভিজ্যুয়াল কালার ম্যাপ দিয়ে দেখা।</td>
+            </tr>
+            <tr>
+              <td><strong>Password Protected Pages</strong></td>
+              <td>প্রাইভেট ফাইল বা পেইড মেম্বারদের জন্য স্পেশাল পেজে পাসওয়ার্ড প্রোটেকশন।</td>
+            </tr>
+            <tr>
+              <td><strong>Direct Video Embed</strong></td>
+              <td>ইউজাররা চাইলে তাদের লেটেস্ট ইউটিউব বা টিকটক ভিডিও সরাসরি পেজের ভেতরেই প্লে করিয়ে দেখাতে পারবে।</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Section 3: SaaS Monetization & Pricing -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">💰</div>
+        <div>
+          <h2>৩. SaaS বিজনেস ও প্রাইসিং মডেল</h2>
+          <p style="margin:0; font-size:13px;">ফ্রি ও পেইড প্ল্যান পরিকল্পনা (International & BD Local)</p>
+        </div>
+      </div>
+
+      <p>
+        ফ্রিমিয়াম (Freemium) মডেলে ইউজার সংগ্রহ দ্রুত বাড়ে। ফ্রি ইউজারদের পেজে <em>"Powered by LinkHub"</em> ব্যাজ থাকবে যা আমাদের ফ্রি মার্কেটিং হিসেবে কাজ করবে।
+      </p>
+
+      <div class="pricing-grid">
+        <!-- Free Plan -->
+        <div class="plan-card">
+          <div class="plan-title">Free Starter</div>
+          <div class="plan-price">$0 <span>/ আজীবন</span></div>
+          <div class="plan-local">৳০ (বিনামূল্যে)</div>
+          <p style="font-size:12px;">নতুন ক্রিয়েটরদের সাইন-আপ ও ভাইরালের জন্য</p>
+          <ul class="plan-features">
+            <li>১টি কাস্টম পেজ</li>
+            <li>সর্বোচ্চ ৫টি লিংক বাটন</li>
+            <li>বেসিক ভিউ কাউন্টার</li>
+            <li>LinkHub সাবডোমেন (user.linkhub.app)</li>
+            <li>LinkHub ওয়াটারমার্ক থাকবে</li>
+          </ul>
+        </div>
+
+        <!-- Pro Plan -->
+        <div class="plan-card highlight">
+          <div class="plan-badge">Most Popular</div>
+          <div class="plan-title">Pro Creator</div>
+          <div class="plan-price">$4.99 <span>/ মাস</span></div>
+          <div class="plan-local">৳২৯৯ / মাস (bKash/Nagad)</div>
+          <p style="font-size:12px;">সিরিয়াস ক্রিয়েটর, গেমার ও ইনফ্লুয়েন্সারদের জন্য</p>
+          <ul class="plan-features">
+            <li>আনলিমিটেড পেজ ও লিংক</li>
+            <li>ওয়াটারমার্ক রিমুভ (No Branding)</li>
+            <li>অ্যাডভান্সড জিও ও ডিভাইস অ্যানালিটিক্স</li>
+            <li>ডায়নামিক QR কোড জেনারেটর</li>
+            <li>কাস্টম ডোমেইন কানেক্ট (CNAME)</li>
+            <li>ভিডিও ও অডিও এম্বেড</li>
+          </ul>
+        </div>
+
+        <!-- Business Plan -->
+        <div class="plan-card">
+          <div class="plan-title">Business / Agency</div>
+          <div class="plan-price">$14.99 <span>/ মাস</span></div>
+          <div class="plan-local">৳৭৯৯ / মাস (bKash/Nagad)</div>
+          <p style="font-size:12px;">ব্যবসা প্রতিষ্ঠান ও এজেন্সির জন্য</p>
+          <ul class="plan-features">
+            <li>Pro এর সব ফিচার</li>
+            <li>একাধিক টিম মেম্বার একাউন্ট</li>
+            <li>A/B স্প্লিট টেস্টিং</li>
+            <li>রেসপন্স ও লিড কালেকশন ফরম</li>
+            <li>API ও ওয়েবহুক ইন্টিগ্রেশন</li>
+            <li>প্রাইওরিটি ২৪/৭ সাপোর্ট</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="alert-box" style="margin-top:20px;">
+        <strong>💳 পেমেন্ট গেটওয়ে সমাধান:</strong> 
+        বাংলাদেশি ইউজারদের জন্য <strong>bKash / Nagad / Rocket</strong> (via SSLCommerz, Shurjopay বা AmarPay) এবং আন্তর্জাতিক ইউজারদের জন্য <strong>Stripe / LemonSqueezy</strong> যুক্ত করলে পেমেন্ট ড্রপ-অফ ০% এ নেমে আসবে।
+      </div>
+    </div>
+
+    <!-- Section 4: Market & Financial Projection -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">📈</div>
+        <div>
+          <h2>৪. লাভ ও রাজস্ব প্রক্ষেপণ (Financial Projection)</h2>
+          <p style="margin:0; font-size:13px;">কনজারভেটিভ হিসেব (মাত্র ৩-৫% কনভার্সন রেট ধরে)</p>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>সময়সীমা</th>
+              <th>মোট ইউজার</th>
+              <th>পেইড ইউজার (৪%)</th>
+              <th>মাসিক আয় (MRR)</th>
+              <th>বার্ষিক আয় (ARR)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>মাস ৩</strong></td>
+              <td>৫০০ জন</td>
+              <td>২০ জন</td>
+              <td>৳৬,০০০ - ৳১৫,০০০ ($100)</td>
+              <td>৳১,২০,০০০+</td>
+            </tr>
+            <tr>
+              <td><strong>মাস ৬</strong></td>
+              <td>২,০০০ জন</td>
+              <td>৮০ জন</td>
+              <td>৳২৪,০০০ - ৳৬০,০০০ ($400)</td>
+              <td>৳৫,০০,০০০+</td>
+            </tr>
+            <tr>
+              <td><strong>বছর ১</strong></td>
+              <td>৭,৫০০ জন</td>
+              <td>৩০০ জন</td>
+              <td>৳৯০,০০০ - ৳২,০০,০০০ ($1,500)</td>
+              <td>৳২০,০০,০০০+</td>
+            </tr>
+            <tr>
+              <td><strong>বছর ২</strong></td>
+              <td>২৫,০০০ জন</td>
+              <td>১,০০০ জন</td>
+              <td>৳৩,০০,০০০ - ৳৬,০০,০০০ ($5,000)</td>
+              <td>৳৬০,০০,০০০+</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:13px; color:var(--text-dim);">
+        * নোট: এর বাইরে অতিরিক্ত আয় হতে পারে কাস্টম ডোমেইন বিক্রি, পেইড টেমপ্লেট ও স্পনসরড ব্যানার স্লট থেকে।
+      </p>
+    </div>
+
+    <!-- Section 5: Competitor Analysis & Blue Ocean -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🏆</div>
+        <div>
+          <h2>৫. প্রতিযোগী বিশ্লেষণ ও আমাদের জয়ের কৌশল</h2>
+          <p style="margin:0; font-size:13px;">কেন মানুষ Linktree ছেড়ে LinkHub ব্যবহার করবে?</p>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>প্রতিযোগী</th>
+              <th>তাদের দুর্বলতা</th>
+              <th>LinkHub এর শ্রেষ্ঠত্ব (Edge)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Linktree</strong></td>
+              <td>ব্লোটেড (ধীরগতির), একঘেয়ে জেনেরিক ডিজাইন, লোকাল পেমেন্ট নেই, প্রতি মাসে বেশি খরচ।</td>
+              <td>সুপার ফাস্ট Next.js স্পিড, কাটিং-এজ গ্লাস ডিজাইন, bKash পেমেন্ট।</td>
+            </tr>
+            <tr>
+              <td><strong>Beacons.ai</strong></td>
+              <td>অতিরিক্ত জটিল AI অপশন, বিগিনারদের জন্য কনফিউজিং।</td>
+              <td>সরাসরি ৩-ক্লিকে লিংক তৈরি, সহজ বাংলা ও ইংরেজি ইন্টারফেস।</td>
+            </tr>
+            <tr>
+              <td><strong>Lnk.Bio</strong></td>
+              <td>ডিজাইন দেখতে পুরনো আমলের, প্রিমিয়াম ভাইব নেই।</td>
+              <td>আধুনিক নিয়ন, গ্রেডিয়েন্ট ও ডার্ক গ্লাস নান্দনিকতা।</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>🎯 আমাদের ফোকাস নিস (Target Niches)</h3>
+      <p>
+        ১. <strong>গেমিং কমিউনিটি (Free Fire, PUBG, Valorant):</strong> টপ-আপ লিংক, ডিসকর্ড লিংক ও টুর্নামেন্ট রেজিস্ট্রেশন পেজ হিসেবে সেরা চয়েস।<br>
+        ২. <strong>TikTok & Reels ইনফ্লুয়েন্সার:</strong> বায়োতে একাধিক এফিলিয়েট প্রোডাক্ট ও পার্টনারশিপ যোগাযোগের লিংক রাখতে।<br>
+        ৩. <strong>স্থানীয় ছোট উদ্যোক্তা (F-Commerce):</strong> ফেসবুক পেইজ, হোয়াটসঅ্যাপ অর্ডার ও শপ লিংক একসাথে দেওয়ার জন্য।
+      </p>
+    </div>
+
+    <!-- Section 6: Technical Architecture & Next Steps -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🛠️</div>
+        <div>
+          <h2>৬. টেকনিক্যাল আর্কিটেকচার ও পরবর্তী কাজের ধাপ</h2>
+          <p style="margin:0; font-size:13px;">কোডিংয়ে আমরা এরপর কীভাবে এগোবো</p>
+        </div>
+      </div>
+
+      <div class="alert-box">
+        <strong>ধাপ ১: Multi-Tenant Database Architecture</strong><br>
+        বর্তমান সিঙ্গেল অ্যাডমিন থেকে বদলে প্রতি ইউজারের আলাদা <code>userId</code> এর অধীনে পেজ ও লিংক সাজানো হবে। (Firebase Auth + Firestore বা Supabase/PostgreSQL)।
+      </div>
+
+      <div class="alert-box">
+        <strong>ধাপ ২: Dynamic Subdomain Routing</strong><br>
+        <code>username.linkhub.app</code> সাবডোমেইন যাতে অটোমেটিক ইউজারের পেজ লোড করে তার জন্য Next.js Middleware রিরাইট যুক্ত করা।
+      </div>
+
+      <div class="alert-box">
+        <strong>ধাপ ৩: Public Landing Page</strong><br>
+        একটি চোখ ধাঁধানো হোমপেজ যেখানে নতুন ইউজাররা দেখতে পারবে প্ল্যাটফর্মের সুবিধাসমূহ এবং "Claim Your Link" বাটনে ক্লিক করে নিজের ইউজারনেম বুক করতে পারবে।
+      </div>
+
+      <div class="alert-box">
+        <strong>ধাপ ৪: Billing & Subscription Webhooks</strong><br>
+        পেমেন্ট গেটওয়ের সাথে ওয়েবহুক কানেক্ট করে স্বয়ংক্রিয়ভাবে Pro অ্যাকাউন্ট একটিভ করা।
+      </div>
+    </div>
+
+    <!-- Footer Note -->
+    <footer>
+      <p>LinkHub Platform Blueprint • Created with Antigravity AI Engine</p>
+      <p style="margin-top:4px;">কালকে ফিরে এসে যেকোনো একটি ধাপ বেছে নিলেই আমরা কোডিং শুরু করে দেব!</p>
+    </footer>
+
+  </div>
+
+  <!-- Toast Element -->
+  <div id="toast" class="toast">✓ সম্পূর্ণ প্ল্যান ক্লিপবোর্ডে কপি হয়েছে!</div>
+
+  <!-- Script for Copying -->
+  <script>
+    function copyEntireDoc() {
+      const textToCopy = `# LinkHub SaaS সম্পূর্ণ বিজনেস প্ল্যান ও রোডম্যাপ
+
+## ১. প্রজেক্ট পরিচিতি
+LinkHub হলো একটি Multi-tenant Link-in-Bio SaaS প্ল্যাটফর্ম। কন্টেন্ট ক্রিয়েটর, এফিলিয়েট মার্কেটার, গেমার ও ব্যবসায়ীদের জন্য অল-ইন-ওয়ান লিংক ম্যানেজমেন্ট টুল।
+
+## ২. মূল ফিচার ও সাজেশন
+- QR Code Generator (টিকটক ও অফলাইন ভিজিটরের জন্য)
+- Advanced Analytics (দেশ, ডিভাইস ও ক্লিক চার্ট)
+- Custom Domain Support (নিজের ডোমেইনে চালানো)
+- Link Scheduling (অটোমেটিক অন/অফ)
+- Dynamic OG Image (সোশ্যাল শেয়ারিং থাম্বনেইল)
+- Click Heatmap ও থিম প্রিসেটস
+
+## ৩. প্রাইসিং ও আয় মডেল
+- Free Plan: $0 / ৳0 (১টি পেজ, ৫টি লিংক, LinkHub ব্র্যান্ডিং সহ)
+- Pro Plan: $4.99 / ৳২৯৯ মাস (আনলিমিটেড পেজ, নো ব্র্যান্ডিং, কাস্টম ডোমেন, কিউআর কোড, ফুল এনালিটিক্স)
+- Business Plan: $14.99 / ৳৭৯৯ মাস (টিম একাউন্ট, ওয়েবহুক, এ/বি টেস্টিং)
+
+## ৪. রাজস্ব প্রক্ষেপণ
+- মাস ৩: ২০ পেইড ইউজার -> $100 / ৳১০,০০০+
+- মাস ৬: ৮০ পেইড ইউজার -> $400 / ৳৪০,০০০+
+- বছর ১: ৩০০ পেইড ইউজার -> $1,500 / ৳১,৫০,০০০+ প্রতি মাসে
+
+## ৫. স্থানীয় সুবিধা ও সুযোগ
+বাংলাদেশ ও দক্ষিণ এশিয়ায় বিকাশ/নগদ সাপোর্টেড কোনো শক্তিশালী Link-in-Bio প্ল্যাটফর্ম নেই। গেমিং ক্রিয়েটর ও লোকাল ব্র্যান্ডের টার্গেট করে খুব সহজেই লিংকট্রিকে টেক্কা দেওয়া সম্ভব।
+
+## ৬. পরবর্তী কাজের ধাপ (Technical Roadmap)
+১. Multi-tenant Auth (ইউজার রেজিস্ট্রেশন)
+২. Subdomain routing (user.linkhub.app)
+৩. Killer Landing Page (প্রোডাক্ট শোকেস)
+৪. Payment Gateway Integration (bKash & Stripe)`;
+
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        const toast = document.getElementById('toast');
+        toast.classList.add('show');
+        setTimeout(() => {
+          toast.classList.remove('show');
+        }, 3000);
+      }).catch(err => {
+        alert('কপি করার জন্য ব্রাউজারে অনুমতি দিন অথবা টেক্সট সিলেক্ট করে কপি করুন।');
+      });
+    }
+  </script>
+</body>
+</html>

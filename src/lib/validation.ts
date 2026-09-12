@@ -18,7 +18,15 @@ export const RESERVED_SLUGS = new Set([
   "_main",
   "home",
   "index",
+  "go",
+  "articles",
+  "about",
+  "contact",
+  "privacy",
+  "terms",
+  "shortener",
 ]);
+
 
 export interface SlugValidationResult {
   valid: boolean;

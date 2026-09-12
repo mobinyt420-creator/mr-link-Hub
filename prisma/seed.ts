@@ -24,20 +24,20 @@ async function main() {
     update: {},
     create: {
       id: "default",
-      brandName: "Mobin X",
-      username: "@mobinx",
-      bio: "Digital Creator • Tech Specialist • Gamer\nOfficial destination for premium gaming services, verified proxy servers & exclusive downloads.",
+      brandName: "Mr Mobin 1M",
+      username: "mobin",
+      bio: "",
       avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80",
       accentColor: "#6366f1",
       glassIntensity: "medium",
       cardStyle: "glass",
-      footerText: "© 2026 Mobin X. All rights reserved. Built for speed & security.",
-      announcementActive: true,
-      announcementText: "🔥 Free Fire Top Up (Instant Delivery) & New Proxy Servers Online!",
-      announcementUrl: "https://example.com/topup",
+      footerText: "© 2026 Mr Mobin 1M. All rights reserved.",
+      announcementActive: false,
+      announcementText: "",
+      announcementUrl: "",
       announcementIcon: "Flame",
-      seoTitle: "Mobin X — Official Hub, Top-Ups & Resources",
-      seoDescription: "Official digital hub of Mobin X. Access fast top ups, proxy servers, download links, tutorials, and social channels.",
+      seoTitle: "Mr Mobin 1M — Official Hub & Links",
+      seoDescription: "Official digital hub of Mr Mobin 1M. All links in one place.",
     },
   });
 
@@ -48,12 +48,12 @@ async function main() {
   const topUpLink = await prisma.link.create({
     data: {
       title: "Free Fire Top Up",
-      description: "Instant UID Diamond Delivery • 24/7 Automated",
+      description: "",
       url: "https://example.com/topup",
       icon: "Diamond",
       type: "featured",
       category: "Service",
-      badge: "INSTANT",
+      badge: "",
       isActive: true,
       order: 1,
     },
@@ -62,12 +62,12 @@ async function main() {
   const telegramLink = await prisma.link.create({
     data: {
       title: "Telegram Channel",
-      description: "@mobinx_official • Daily config & VIP community",
+      description: "",
       url: "https://t.me/mobinx_official",
       icon: "Telegram",
       type: "social",
       category: "Social",
-      badge: "JOIN VIP",
+      badge: "",
       isActive: true,
       order: 2,
     },
@@ -76,12 +76,12 @@ async function main() {
   const youtubeLink = await prisma.link.create({
     data: {
       title: "Official YouTube Channel",
-      description: "Tutorials, Gameplay & Live Streams • Subscribe",
+      description: "",
       url: "https://youtube.com/@mobinx",
       icon: "Youtube",
       type: "social",
       category: "Social",
-      badge: "150K SUB",
+      badge: "",
       isActive: true,
       order: 3,
     },
@@ -89,13 +89,13 @@ async function main() {
 
   const proxyDownloadLink = await prisma.link.create({
     data: {
-      title: "Proxy Download (V2Ray / Clash)",
-      description: "Direct APK & Config files for ultra-low ping gaming",
+      title: "Proxy Download",
+      description: "",
       url: "https://example.com/proxy-download",
       icon: "Download",
       type: "download",
       category: "Download",
-      badge: "v4.2.1",
+      badge: "",
       isActive: true,
       order: 4,
     },
@@ -104,12 +104,12 @@ async function main() {
   const proxyServerLink = await prisma.link.create({
     data: {
       title: "VIP Proxy Server Nodes",
-      description: "Singapore, Germany & US dedicated high-speed routes",
+      description: "",
       url: "https://example.com/proxy-nodes",
       icon: "Server",
       type: "standard",
       category: "Service",
-      badge: "LOW PING",
+      badge: "",
       isActive: true,
       order: 5,
     },
@@ -118,18 +118,18 @@ async function main() {
   const whatsappLink = await prisma.link.create({
     data: {
       title: "WhatsApp Official Channel",
-      description: "Instant announcements & discount codes directly to your chat",
+      description: "",
       url: "https://whatsapp.com/channel/example",
       icon: "WhatsApp",
       type: "social",
       category: "Social",
-      badge: "UPDATES",
+      badge: "",
       isActive: true,
       order: 6,
     },
   });
 
-  // 4. Main Website
+  // 4. Main Website — flat list, NO section headings
   const mainPage = await prisma.page.upsert({
     where: { slug: "_main" },
     update: {},
@@ -137,22 +137,20 @@ async function main() {
       name: "Main Website",
       slug: "_main",
       isMain: true,
-      title: "Mobin X Portal",
-      description: "Official Central Hub",
+      title: "Mr Mobin 1M",
+      description: "Official Hub",
       isActive: true,
     },
   });
 
+  // Clean flat components — no section headings, just links
   const mainComponents = [
-    { componentType: "SECTION_HEADING", headingText: "🔥 Top-Up & VIP Services", position: 0 },
-    { componentType: "FEATURED_LINK", linkId: topUpLink.id, position: 1 },
-    { componentType: "LINK_CARD", linkId: proxyServerLink.id, position: 2 },
-    { componentType: "SECTION_HEADING", headingText: "⚡ Fast Downloads", position: 3 },
-    { componentType: "DOWNLOAD_LINK", linkId: proxyDownloadLink.id, position: 4 },
-    { componentType: "SECTION_HEADING", headingText: "🌐 Join Official Communities", position: 5 },
-    { componentType: "SOCIAL_LINK", linkId: telegramLink.id, position: 6 },
-    { componentType: "SOCIAL_LINK", linkId: youtubeLink.id, position: 7 },
-    { componentType: "SOCIAL_LINK", linkId: whatsappLink.id, position: 8 },
+    { componentType: "FEATURED_LINK", linkId: topUpLink.id, position: 0 },
+    { componentType: "LINK_CARD", linkId: proxyServerLink.id, position: 1 },
+    { componentType: "DOWNLOAD_LINK", linkId: proxyDownloadLink.id, position: 2 },
+    { componentType: "SOCIAL_LINK", linkId: telegramLink.id, position: 3 },
+    { componentType: "SOCIAL_LINK", linkId: youtubeLink.id, position: 4 },
+    { componentType: "SOCIAL_LINK", linkId: whatsappLink.id, position: 5 },
   ];
 
   for (const comp of mainComponents) {
@@ -164,7 +162,7 @@ async function main() {
     });
   }
 
-  // 5. Extra Page
+  // 5. Extra Page example
   const tiktokPage = await prisma.page.upsert({
     where: { slug: "tiktok-01" },
     update: {},
@@ -196,7 +194,7 @@ async function main() {
     },
   });
 
-  console.log("Database seeded successfully with official icons & clean card structure!");
+  console.log("Database seeded — clean flat card structure, no section headings!");
 }
 
 main()

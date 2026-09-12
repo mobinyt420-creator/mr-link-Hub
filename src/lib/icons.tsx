@@ -177,6 +177,59 @@ export const DiamondLogo: React.FC<{ className?: string; size?: number }> = ({
   </svg>
 );
 
+// 6. Official TikTok Logo
+export const TikTokLogo: React.FC<{ className?: string; size?: number }> = ({
+  className = "w-6 h-6",
+  size = 24,
+}) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 240 240"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+  >
+    <circle cx="120" cy="120" r="120" fill="#010101" />
+    <path
+      d="M165.5 99.5c-8.2-5.3-14-14-15.2-24h-24.8v85.2c0 13.2-10.7 23.8-23.8 23.8-5.1 0-9.9-1.6-13.8-4.4-6.4-4.5-10.5-12-10.5-20.4 0-13.2 10.7-23.8 23.8-23.8 2.5 0 4.9.4 7.1 1.1v-25.4c-2.3-.3-4.7-.5-7.1-.5-27 0-48.9 21.9-48.9 48.9 0 16.7 8.4 31.5 21.2 40.3 8 5.5 17.7 8.6 28.1 8.6 27 0 48.9-21.9 48.9-48.9v-44.8c10.2 7.3 22.6 11.6 36 11.6v-24.8c-7.5 0-14.5-2.2-20.5-5.8"
+      fill="#25F4EE"
+    />
+    <path
+      d="M171.5 105.3c-8.2-5.3-14-14-15.2-24h-24.8v85.2c0 13.2-10.7 23.8-23.8 23.8-5.1 0-9.9-1.6-13.8-4.4 5.6 5.8 13.4 9.4 22 9.4 13.2 0 23.8-10.7 23.8-23.8V86h24.8c1.2 10 7 18.7 15.2 24 6 3.6 13 5.8 20.5 5.8v-7.2c-7.5-.5-14.5-2.6-20.5-6"
+      fill="#FE2C55"
+    />
+  </svg>
+);
+
+// 7. Official Instagram Logo
+export const InstagramLogo: React.FC<{ className?: string; size?: number }> = ({
+  className = "w-6 h-6",
+  size = 24,
+}) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 240 240"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+  >
+    <defs>
+      <linearGradient id="ig_grad" x1="40" y1="220" x2="220" y2="40" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#FFDC80" />
+        <stop offset="0.3" stopColor="#F77737" />
+        <stop offset="0.6" stopColor="#E1306C" />
+        <stop offset="1" stopColor="#833AB4" />
+      </linearGradient>
+    </defs>
+    <rect width="240" height="240" rx="56" fill="url(#ig_grad)" />
+    <rect x="42" y="42" width="156" height="156" rx="36" stroke="#FFFFFF" strokeWidth="14" fill="none" />
+    <circle cx="120" cy="120" r="38" stroke="#FFFFFF" strokeWidth="14" fill="none" />
+    <circle cx="174" cy="66" r="11" fill="#FFFFFF" />
+  </svg>
+);
+
 export const ICON_MAP: Record<string, React.FC<any>> = {
   Zap,
   Youtube: YoutubeLogo,
@@ -186,6 +239,8 @@ export const ICON_MAP: Record<string, React.FC<any>> = {
   WhatsApp: WhatsAppLogo,
   MessageCircle: WhatsAppLogo,
   Facebook: FacebookLogo,
+  TikTok: TikTokLogo,
+  Instagram: InstagramLogo,
   Diamond: DiamondLogo,
   Radio,
   Server,
@@ -240,6 +295,8 @@ export const AVAILABLE_ICONS = [
   { name: "Youtube", label: "YouTube (Official)", category: "Social" },
   { name: "WhatsApp", label: "WhatsApp (Official)", category: "Social" },
   { name: "Facebook", label: "Facebook (Official)", category: "Social" },
+  { name: "TikTok", label: "TikTok (Official)", category: "Social" },
+  { name: "Instagram", label: "Instagram (Official)", category: "Social" },
   { name: "Diamond", label: "Free Fire Diamond", category: "Gaming" },
 
   // General & Highlights

@@ -101,7 +101,7 @@ export default async function DynamicExtraPage({ params }: PageProps) {
   );
 
   return (
-    <main className="min-h-screen flex flex-col relative selection:bg-indigo-500 selection:text-white">
+    <main className="min-h-screen flex flex-col relative selection:bg-indigo-500 selection:text-white noise-overlay">
       <BackgroundGlow accentColor={accentColor} />
       <AnalyticsTracker pageId={page.id} />
 
