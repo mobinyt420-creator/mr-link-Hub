@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Sparkles, Loader2, AlertCircle, ArrowRight, Zap, Globe, DollarSign, ExternalLink } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
@@ -13,9 +13,11 @@ export default function AdminLoginPage() {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState("");
 
-  if (user) {
-    router.push("/admin");
-  }
+  useEffect(() => {
+    if (user) {
+      window.location.href = "/admin";
+    }
+  }, [user]);
 
   const isUnauthorizedDomain = error?.includes("unauthorized-domain");
   const isConfigNotFound = error?.includes("configuration-not-found");

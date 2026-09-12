@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import {
@@ -22,9 +22,11 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  if (user) {
-    router.push("/admin");
-  }
+  useEffect(() => {
+    if (user) {
+      window.location.href = "/admin";
+    }
+  }, [user]);
 
   const isConfigNotFound = error?.includes("configuration-not-found");
 
