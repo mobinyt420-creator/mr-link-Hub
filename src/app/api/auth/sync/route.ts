@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { signToken, AUTH_COOKIE_NAME } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,15 +12,15 @@ export async function POST(request: NextRequest) {
     }
 
     // Check or create admin / creator user in DB
-    const existing = await prisma.adminUser.findUnique({
-      where: { email },
+    let user = await prisma.adminUser.findUnique({
+      where: { email: email.toLowerCase().trim() },
     });
 
-    if (!existing) {
-      await prisma.adminUser.create({
+    if (!user) {
+      user = await prisma.adminUser.create({
         data: {
           id: uid,
-          email,
+          email: email.toLowerCase().trim(),
           name: displayName || "Creator",
           passwordHash: "FIREBASE_OAUTH_USER",
         },
@@ -45,7 +46,28 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    return NextResponse.json({ success: true, username: pageSlug });
+    // Set secure auth cookie so user can immediately access /admin
+    const token = signToken({
+      userId: user.id,
+      email: user.email,
+      name: user.name,
+    });
+
+    const response = NextResponse.json({
+      success: true,
+      username: pageSlug,
+      user: { id: user.id, email: user.email, name: user.name },
+    });
+
+    response.cookies.set(AUTH_COOKIE_NAME, token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+      path: "/",
+    });
+
+    return response;
   } catch (error: any) {
     console.error("Auth Sync Error:", error);
     return NextResponse.json(

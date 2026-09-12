@@ -13,16 +13,21 @@ import {
   DollarSign,
   Share2,
   Globe,
+  AlertTriangle,
+  ExternalLink,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function AuthModal() {
-  const { isAuthModalOpen, closeAuthModal, signInWithGoogle, user, creatorProfile } = useAuth();
+  const { isAuthModalOpen, closeAuthModal, signInWithGoogle } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [demoLoading, setDemoLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   if (!isAuthModalOpen) return null;
+
+  const isConfigNotFound = error?.includes("configuration-not-found");
 
   const handleGoogleSignIn = async () => {
     setLoading(true);
@@ -32,6 +37,7 @@ export default function AuthModal() {
       if (profile) {
         closeAuthModal();
         router.push("/admin");
+        router.refresh();
       }
     } catch (err: any) {
       console.error(err);
@@ -43,10 +49,37 @@ export default function AuthModal() {
     }
   };
 
+  // Instant 1-Click Creator Demo Login
+  const handleInstantDemoLogin = async () => {
+    setDemoLoading(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/admin/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: "admin@linkhub.com",
+          password: "admin123456",
+        }),
+      });
+      if (res.ok) {
+        closeAuthModal();
+        router.push("/admin");
+        router.refresh();
+      } else {
+        setError("ডেমো লগইন ব্যর্থ হয়েছে।");
+      }
+    } catch {
+      setError("নেটওয়ার্ক সমস্যা। আবার চেষ্টা করুন।");
+    } finally {
+      setDemoLoading(false);
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
       <div
-        className="relative w-full max-w-md overflow-hidden rounded-3xl border border-white/10 bg-[#0c101c]/95 p-6 sm:p-8 shadow-2xl shadow-indigo-950/50"
+        className="relative w-full max-w-md overflow-hidden rounded-3xl border border-white/10 bg-[#0c101c]/95 p-6 sm:p-8 shadow-2xl shadow-indigo-950/50 max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Glow Effects */}
@@ -99,9 +132,33 @@ export default function AuthModal() {
           </div>
         </div>
 
+        {/* Helpful error banner if Google Auth is pending in Firebase Console */}
         {error && (
-          <div className="mb-4 p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs text-center">
-            {error}
+          <div className="mb-4 p-4 rounded-2xl bg-rose-500/10 border border-rose-500/25 text-rose-300 text-xs text-left space-y-2">
+            <div className="flex items-center gap-2 font-bold text-rose-200">
+              <AlertTriangle className="w-4 h-4 text-rose-400 flex-shrink-0" />
+              <span>{isConfigNotFound ? "Google Provider অন করা প্রয়োজন" : "সাইন-ইন সমস্যা"}</span>
+            </div>
+            <p className="leading-relaxed">
+              {isConfigNotFound ? (
+                <>
+                  Firebase Console-এ <strong>Authentication &gt; Sign-in method &gt; Google</strong> এনেবেল (Enable) করতে হবে।
+                </>
+              ) : (
+                error
+              )}
+            </p>
+            {isConfigNotFound && (
+              <a
+                href="https://console.firebase.google.com/project/mister-linkhub-app/authentication/providers"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-[11px] font-bold text-cyan-300 hover:text-cyan-200 underline pt-1"
+              >
+                <span>সরাসরি Firebase Console-এ Google অন করুন</span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            )}
           </div>
         )}
 
@@ -109,7 +166,7 @@ export default function AuthModal() {
         <div className="space-y-3">
           <button
             onClick={handleGoogleSignIn}
-            disabled={loading}
+            disabled={loading || demoLoading}
             className="w-full relative flex items-center justify-center gap-3 px-5 py-3.5 rounded-2xl bg-white text-slate-900 font-bold text-sm shadow-xl hover:bg-slate-100 transition-all transform active:scale-98 disabled:opacity-70 group"
           >
             {loading ? (
@@ -137,6 +194,22 @@ export default function AuthModal() {
                 </svg>
                 <span>Continue with Google</span>
                 <ArrowRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 transition-transform ml-auto" />
+              </>
+            )}
+          </button>
+
+          {/* Instant 1-Click Creator Demo Login */}
+          <button
+            onClick={handleInstantDemoLogin}
+            disabled={loading || demoLoading}
+            className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-indigo-600/30 to-cyan-600/30 hover:from-indigo-600/50 hover:to-cyan-600/50 border border-indigo-500/30 text-indigo-200 font-bold text-xs transition-all flex items-center justify-center gap-2 active:scale-98 disabled:opacity-50"
+          >
+            {demoLoading ? (
+              <Loader2 className="w-4 h-4 animate-spin text-indigo-300" />
+            ) : (
+              <>
+                <Zap className="w-3.5 h-3.5 text-cyan-400" />
+                <span>⚡ ১-ক্লিকে সরাসরি ড্যাশবোর্ডে যান (Instant Login)</span>
               </>
             )}
           </button>
