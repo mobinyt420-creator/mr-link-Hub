@@ -1,0 +1,42 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users can read/write their own profile and content
+    match /users/{userId} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.uid == userId;
+      
+      match /pages/{pageId} {
+        allow read: if true;
+        allow write: if request.auth != null && request.auth.uid == userId;
+        
+        match /components/{componentId} {
+          allow read: if true;
+          allow write: if request.auth != null && request.auth.uid == userId;
+        }
+      }
+      
+      match /links/{linkId} {
+        allow read: if true;
+        allow write: if request.auth != null && request.auth.uid == userId;
+      }
+      
+      match /shortLinks/{shortLinkId} {
+        allow read: if true;
+        allow write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+    
+    // Public bio-pages and links are readable by anyone
+    match /public_pages/{slug} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Analytics and gateway views
+    match /analytics/{event} {
+      allow create: if true;
+      allow read: if request.auth != null;
+    }
+  }
+}
