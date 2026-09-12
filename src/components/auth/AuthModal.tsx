@@ -137,12 +137,22 @@ export default function AuthModal() {
           <div className="mb-4 p-4 rounded-2xl bg-rose-500/10 border border-rose-500/25 text-rose-300 text-xs text-left space-y-2">
             <div className="flex items-center gap-2 font-bold text-rose-200">
               <AlertTriangle className="w-4 h-4 text-rose-400 flex-shrink-0" />
-              <span>{isConfigNotFound ? "Google Provider অন করা প্রয়োজন" : "সাইন-ইন সমস্যা"}</span>
+              <span>
+                {isConfigNotFound
+                  ? "Google Provider অন করা প্রয়োজন"
+                  : error.includes("unauthorized-domain")
+                  ? "ডোমেইন অনুমোদিত (Authorized) নয়"
+                  : "সাইন-ইন সমস্যা"}
+              </span>
             </div>
             <p className="leading-relaxed">
               {isConfigNotFound ? (
                 <>
                   Firebase Console-এ <strong>Authentication &gt; Sign-in method &gt; Google</strong> এনেবেল (Enable) করতে হবে।
+                </>
+              ) : error.includes("unauthorized-domain") ? (
+                <>
+                  আপনি যে ডোমেইন (যেমন Vercel লিঙ্ক) থেকে ভিজিট করছেন, সেটি Firebase-এর অনুমোদিত ডোমেইন তালিকায় যোগ করতে হবে।
                 </>
               ) : (
                 error
@@ -156,6 +166,17 @@ export default function AuthModal() {
                 className="inline-flex items-center gap-1 text-[11px] font-bold text-cyan-300 hover:text-cyan-200 underline pt-1"
               >
                 <span>সরাসরি Firebase Console-এ Google অন করুন</span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            )}
+            {error.includes("unauthorized-domain") && (
+              <a
+                href="https://console.firebase.google.com/project/mister-linkhub-app/authentication/settings"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-[11px] font-bold text-cyan-300 hover:text-cyan-200 underline pt-1"
+              >
+                <span>Firebase-এ আপনার ডোমেইন যোগ করুন (Authorized Domains)</span>
                 <ExternalLink className="w-3 h-3" />
               </a>
             )}
