@@ -26,21 +26,27 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { title, description, url, icon, type, category, badge, isActive, order } = body;
 
-    if (!title || !url) {
+    if (!title?.trim() || !url?.trim()) {
       return NextResponse.json({ error: "Title and URL are required." }, { status: 400 });
+    }
+
+    // Sanitize URL
+    let formattedUrl = url.trim();
+    if (!/^https?:\/\//i.test(formattedUrl) && !/^(mailto|tel):/i.test(formattedUrl)) {
+      formattedUrl = `https://${formattedUrl}`;
     }
 
     const count = await prisma.link.count();
 
     const link = await prisma.link.create({
       data: {
-        title,
-        description: description || "",
-        url,
+        title: title.trim(),
+        description: (description || "").trim(),
+        url: formattedUrl,
         icon: icon || "ExternalLink",
         type: type || "standard",
         category: category || "Service",
-        badge: badge || "",
+        badge: (badge || "").trim(),
         isActive: isActive !== false,
         order: order !== undefined ? order : count,
       },
@@ -48,28 +54,27 @@ export async function POST(request: NextRequest) {
 
     // Auto-attach to active bio page so it displays immediately on the public page
     try {
-      const defaultPage = await prisma.page.findFirst({
+      const activePages = await prisma.page.findMany({
         where: { isActive: true },
-        orderBy: { createdAt: "asc" },
       });
 
-      if (defaultPage) {
-        const compCount = await prisma.pageComponent.count({
-          where: { pageId: defaultPage.id },
-        });
+      const componentType =
+        type === "featured"
+          ? "FEATURED_LINK"
+          : type === "download"
+          ? "DOWNLOAD_LINK"
+          : type === "social"
+          ? "SOCIAL_LINK"
+          : "LINK_CARD";
 
-        const componentType =
-          type === "featured"
-            ? "FEATURED_LINK"
-            : type === "download"
-            ? "DOWNLOAD_LINK"
-            : type === "social"
-            ? "SOCIAL_LINK"
-            : "LINK_CARD";
+      for (const page of activePages) {
+        const compCount = await prisma.pageComponent.count({
+          where: { pageId: page.id },
+        });
 
         await prisma.pageComponent.create({
           data: {
-            pageId: defaultPage.id,
+            pageId: page.id,
             linkId: link.id,
             componentType,
             position: compCount,
@@ -82,8 +87,8 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ link }, { status: 201 });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Link create error:", error);
-    return NextResponse.json({ error: "Failed to create link" }, { status: 500 });
+    return NextResponse.json({ error: error.message || "Failed to create link" }, { status: 500 });
   }
 }

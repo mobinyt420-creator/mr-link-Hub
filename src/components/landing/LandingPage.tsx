@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -38,6 +38,13 @@ export default function LandingPage() {
   const router = useRouter();
   const [claimHandle, setClaimHandle] = useState("");
   const [activeTab, setActiveTab] = useState<"gamer" | "influencer" | "business">("gamer");
+  const [origin, setOrigin] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setOrigin(window.location.origin);
+    }
+  }, []);
 
   const handleClaim = (e: React.FormEvent) => {
     e.preventDefault();
@@ -134,7 +141,9 @@ export default function LandingPage() {
                 className="w-full max-w-md mx-auto lg:mx-0 p-1.5 rounded-2xl bg-[#0d1222]/90 border border-white/10 shadow-2xl flex flex-col sm:flex-row gap-2"
               >
                 <div className="flex items-center px-3.5 py-2.5 flex-1">
-                  <span className="text-xs sm:text-sm font-bold text-indigo-400">linkhub.app/</span>
+                  <span className="text-xs sm:text-sm font-bold text-indigo-400 font-mono truncate max-w-[150px]">
+                    {origin ? `${origin.replace(/^https?:\/\//, "")}/u/` : "mr-link-Hub.vercel.app/u/"}
+                  </span>
                   <input
                     type="text"
                     value={claimHandle}

@@ -28,16 +28,24 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
 
   try {
     const body = await request.json();
+    let formattedUrl = body.url;
+    if (body.url !== undefined && typeof body.url === "string") {
+      formattedUrl = body.url.trim();
+      if (!/^https?:\/\//i.test(formattedUrl) && !/^(mailto|tel):/i.test(formattedUrl)) {
+        formattedUrl = `https://${formattedUrl}`;
+      }
+    }
+
     const link = await prisma.link.update({
       where: { id },
       data: {
-        ...(body.title !== undefined && { title: body.title }),
-        ...(body.description !== undefined && { description: body.description }),
-        ...(body.url !== undefined && { url: body.url }),
+        ...(body.title !== undefined && { title: body.title.trim() }),
+        ...(body.description !== undefined && { description: (body.description || "").trim() }),
+        ...(formattedUrl !== undefined && { url: formattedUrl }),
         ...(body.icon !== undefined && { icon: body.icon }),
         ...(body.type !== undefined && { type: body.type }),
         ...(body.category !== undefined && { category: body.category }),
-        ...(body.badge !== undefined && { badge: body.badge }),
+        ...(body.badge !== undefined && { badge: (body.badge || "").trim() }),
         ...(body.isActive !== undefined && { isActive: body.isActive }),
         ...(body.order !== undefined && { order: body.order }),
       },

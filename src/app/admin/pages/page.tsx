@@ -17,6 +17,7 @@ import {
   ChevronUp,
   GripVertical,
   Layers,
+  Copy,
 } from "lucide-react";
 import { DynamicIcon, AVAILABLE_ICONS } from "@/lib/icons";
 
@@ -75,6 +76,14 @@ export default function AdminPagesPage() {
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState<string | null>(null);
   const [error, setError] = useState("");
+  const [origin, setOrigin] = useState("");
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setOrigin(window.location.origin);
+    }
+  }, []);
 
   // Create form
   const [createForm, setCreateForm] = useState({
@@ -300,10 +309,34 @@ export default function AdminPagesPage() {
                       {page.isActive ? "Active" : "Inactive"}
                     </span>
                   </div>
-                  <p className="text-sm text-slate-400 mt-1">
-                    <span className="font-mono text-indigo-400/70">/{page.slug}</span>
-                    {page.description && <span className="ml-2 text-slate-500">— {page.description}</span>}
-                  </p>
+                  <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                    <span className="font-mono text-xs text-indigo-300 bg-indigo-500/10 px-2 py-0.5 rounded-lg border border-indigo-500/20">
+                      {origin ? origin.replace(/^https?:\/\//, "") : "mr-link-Hub.vercel.app"}/{page.slug}
+                    </span>
+                    <button
+                      onClick={() => {
+                        const fullUrl = `${origin || "https://mr-link-Hub.vercel.app"}/${page.slug}`;
+                        navigator.clipboard.writeText(fullUrl);
+                        setCopiedId(page.id);
+                        setTimeout(() => setCopiedId(null), 2000);
+                      }}
+                      className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition-colors"
+                      title="Copy live page URL"
+                    >
+                      {copiedId === page.id ? (
+                        <>
+                          <Check className="w-3 h-3 text-emerald-400" />
+                          <span className="text-emerald-300">কপি হয়েছে!</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3 h-3 text-slate-400" />
+                          <span>URL কপি</span>
+                        </>
+                      )}
+                    </button>
+                    {page.description && <span className="text-xs text-slate-500">— {page.description}</span>}
+                  </div>
                   <div className="flex items-center gap-4 mt-2 text-xs text-slate-500">
                     <span>{page._count?.components || 0} components</span>
                     <span>{page.viewsCount} views</span>
@@ -389,8 +422,10 @@ export default function AdminPagesPage() {
 
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider">Slug *</label>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-slate-500">yoursite.com/</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs sm:text-sm text-indigo-400 font-mono font-semibold">
+                      {origin ? origin.replace(/^https?:\/\//, "") : "mr-link-Hub.vercel.app"}/
+                    </span>
                   <input
                     type="text"
                     value={createForm.slug}

@@ -16,6 +16,9 @@ import {
   Scissors,
   ExternalLink,
   Globe,
+  Copy,
+  Check,
+  Share2,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
@@ -40,9 +43,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
+  const [origin, setOrigin] = useState("");
+  const [copied, setCopied] = useState(false);
 
   // Skip auth check on login page
   const isLoginPage = pathname === "/admin/login";
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setOrigin(window.location.origin);
+    }
+  }, []);
 
   useEffect(() => {
     if (isLoginPage) {
@@ -108,9 +119,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     );
   }
 
-  const username = creatorProfile?.username || "mobin";
+  const username = creatorProfile?.username || user?.email?.split("@")[0] || "mobin";
   const displayName = creatorProfile?.displayName || user?.name || "Creator";
   const avatarUrl = creatorProfile?.photoURL || firebaseUser?.photoURL || "";
+  const liveBase = origin || "https://mr-link-Hub.vercel.app";
+  const liveBioUrl = `${liveBase}/u/${username}`;
+  const displayHost = liveBase.replace(/^https?:\/\//, "");
+
+  const handleCopyBio = () => {
+    navigator.clipboard.writeText(liveBioUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
     <div className="min-h-screen bg-[#06080d] flex">
@@ -143,18 +163,45 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </div>
           </div>
 
-          {/* Quick Link to Live Bio Page */}
-          <Link
-            href={`/u/${username}`}
-            target="_blank"
-            className="mt-4 w-full flex items-center justify-between px-3 py-2 rounded-xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.08] text-xs font-semibold text-indigo-300 transition-all group"
-          >
-            <div className="flex items-center gap-2 truncate">
-              <Globe className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" />
-              <span className="truncate">linkhub.app/u/{username}</span>
+          {/* Dynamic Bio URL Display + 1-Click Copy & Preview */}
+          <div className="mt-4 p-2.5 rounded-2xl bg-white/[0.03] border border-white/[0.08] space-y-2">
+            <div className="flex items-center justify-between text-[11px] text-slate-400 font-semibold px-1">
+              <span className="flex items-center gap-1 text-cyan-400">
+                <Globe className="w-3 h-3" />
+                <span>আপনার লাইভ লিঙ্ক</span>
+              </span>
+              <span className="text-[9px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 font-mono font-bold">
+                ACTIVE
+              </span>
             </div>
-            <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-white transition-colors flex-shrink-0" />
-          </Link>
+
+            <div className="flex items-center gap-1 bg-black/40 rounded-xl p-1 border border-white/5">
+              <span className="text-[11px] text-indigo-300 font-mono truncate flex-1 pl-1.5 select-all">
+                {displayHost}/u/{username}
+              </span>
+              <button
+                onClick={handleCopyBio}
+                className={`p-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all ${
+                  copied
+                    ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                    : "bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white"
+                }`}
+                title="Copy URL"
+              >
+                {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                <span className="text-[10px]">{copied ? "কপি!" : "কপি"}</span>
+              </button>
+              <a
+                href={`/u/${username}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-1.5 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 hover:text-indigo-300 transition-colors"
+                title="Open live page"
+              >
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            </div>
+          </div>
         </div>
 
         {/* Navigation */}
@@ -217,25 +264,41 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {/* Main content */}
       <main className="flex-1 min-h-screen">
-        {/* Top bar (mobile) */}
-        <div className="sticky top-0 z-30 lg:hidden bg-[#0a0d14]/90 backdrop-blur-xl border-b border-white/[0.06] px-4 py-3 flex items-center justify-between">
+        {/* Top bar (mobile & desktop live link bar) */}
+        <div className="sticky top-0 z-30 bg-[#0a0d14]/90 backdrop-blur-xl border-b border-white/[0.06] px-4 py-2.5 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="p-2 rounded-lg hover:bg-white/[0.05] text-slate-400 hover:text-white transition-colors"
+              className="p-2 rounded-lg hover:bg-white/[0.05] text-slate-400 hover:text-white transition-colors lg:hidden"
             >
               <Menu className="w-5 h-5" />
             </button>
-            <span className="text-sm font-bold text-white">LinkHub Creator Studio</span>
+            <span className="text-sm font-bold text-white">Creator Studio</span>
           </div>
-          <Link
-            href={`/u/${username}`}
-            target="_blank"
-            className="p-2 rounded-lg bg-white/[0.05] text-indigo-300 text-xs font-semibold flex items-center gap-1"
-          >
-            <span>Live Bio</span>
-            <ExternalLink className="w-3 h-3" />
-          </Link>
+
+          {/* Quick Copy & Live Bio Link */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleCopyBio}
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all ${
+                copied
+                  ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                  : "bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 border border-white/[0.08]"
+              }`}
+            >
+              {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+              <span>{copied ? "কপি হয়েছে!" : "Bio Link Copy"}</span>
+            </button>
+
+            <Link
+              href={`/u/${username}`}
+              target="_blank"
+              className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-indigo-600/30 to-purple-600/30 hover:from-indigo-600/50 hover:to-purple-600/50 border border-indigo-500/30 text-indigo-200 text-xs font-semibold flex items-center gap-1.5 transition-all"
+            >
+              <span>Live Bio</span>
+              <ExternalLink className="w-3 h-3" />
+            </Link>
+          </div>
         </div>
 
         {/* Page content */}

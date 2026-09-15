@@ -76,9 +76,48 @@ export default async function CreatorBioPage({ params }: CreatorPageProps) {
   const accentColor = settings?.accentColor || "#6366f1";
   const avatarUrl = settings?.avatarUrl || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80";
 
-  const activeComponents = (page?.components || []).filter(
+  let activeComponents = (page?.components || []).filter(
     (c) => c.isVisible && (!c.link || c.link.isActive)
   );
+
+  // Fallback: If no components explicitly attached, auto-load active links
+  if (activeComponents.length === 0) {
+    try {
+      const activeLinks = await prisma.link.findMany({
+        where: { isActive: true },
+        orderBy: { order: "asc" },
+      });
+
+      if (activeLinks.length > 0) {
+        activeComponents = activeLinks.map((link, idx) => ({
+          id: `link-comp-${link.id}`,
+          pageId: page?.id || "creator-page",
+          linkId: link.id,
+          link,
+          componentType:
+            link.type === "featured"
+              ? "FEATURED_LINK"
+              : link.type === "download"
+              ? "DOWNLOAD_LINK"
+              : link.type === "social"
+              ? "SOCIAL_LINK"
+              : "LINK_CARD",
+          position: idx,
+          isVisible: true,
+          createdAt: link.createdAt,
+          updatedAt: link.updatedAt,
+          customTitle: null,
+          customDescription: null,
+          customBadge: null,
+          headingText: null,
+          announcementText: null,
+          announcementUrl: null,
+        })) as any;
+      }
+    } catch {
+      // ignore
+    }
+  }
 
   return (
     <main className="min-h-screen flex flex-col relative selection:bg-indigo-500 selection:text-white noise-overlay">

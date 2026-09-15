@@ -11,42 +11,64 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    // Check or create admin / creator user in DB
-    let user = await prisma.adminUser.findUnique({
-      where: { email: email.toLowerCase().trim() },
+    const cleanEmail = email.toLowerCase().trim();
+
+    // Check if creator exists by email or uid
+    let user = await prisma.adminUser.findFirst({
+      where: {
+        OR: [{ email: cleanEmail }, { id: uid }],
+      },
     });
 
     if (!user) {
-      user = await prisma.adminUser.create({
-        data: {
-          id: uid,
-          email: email.toLowerCase().trim(),
-          name: displayName || "Creator",
-          passwordHash: "FIREBASE_OAUTH_USER",
-        },
-      });
+      try {
+        user = await prisma.adminUser.create({
+          data: {
+            id: uid,
+            email: cleanEmail,
+            name: displayName || "Creator",
+            passwordHash: "FIREBASE_OAUTH_USER",
+          },
+        });
+      } catch {
+        user = await prisma.adminUser.create({
+          data: {
+            email: cleanEmail,
+            name: displayName || "Creator",
+            passwordHash: "FIREBASE_OAUTH_USER",
+          },
+        });
+      }
     }
 
-    // Check if Page exists for this user's username
-    const pageSlug = username || "creator";
-    const existingPage = await prisma.page.findUnique({
-      where: { slug: pageSlug },
-    });
+    // Check if Bio Page exists for this user's username
+    const pageSlug = (username || cleanEmail.split("@")[0] || "creator")
+      .toLowerCase()
+      .replace(/[^a-z0-9_-]/g, "")
+      .slice(0, 30);
 
-    if (!existingPage) {
-      await prisma.page.create({
-        data: {
-          name: displayName || "My Links",
-          slug: pageSlug,
-          title: displayName || "Official Hub",
-          description: "Digital Creator • Links & Top-ups",
-          isActive: true,
-          isMain: false,
-        },
+    try {
+      const existingPage = await prisma.page.findUnique({
+        where: { slug: pageSlug },
       });
+
+      if (!existingPage) {
+        await prisma.page.create({
+          data: {
+            name: displayName || "My Links",
+            slug: pageSlug,
+            title: displayName || "Official Hub",
+            description: "Digital Creator • Personal Hub",
+            isActive: true,
+            isMain: false,
+          },
+        });
+      }
+    } catch (pageErr) {
+      console.warn("Auto page check notice:", pageErr);
     }
 
-    // Set secure auth cookie so user can immediately access /admin
+    // Sign token and issue session cookie
     const token = signToken({
       userId: user.id,
       email: user.email,

@@ -1,6 +1,8 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import Link from "next/link";
-import { ShieldCheck, ArrowLeft, Sparkles } from "lucide-react";
+import { ShieldCheck, ArrowLeft, Sparkles, Share2, Check } from "lucide-react";
 import { DynamicIcon } from "@/lib/icons";
 
 interface ProfileHeaderProps {
@@ -43,7 +45,30 @@ export default function ProfileHeader({
   pageIcon,
   accentColor = "#6366f1",
 }: ProfileHeaderProps) {
+  const [copied, setCopied] = useState(false);
   const platform = isExtraPage ? detectPlatform(pageTitle, pageDescription) : null;
+
+  const handleShare = () => {
+    if (typeof window !== "undefined") {
+      if (navigator.share) {
+        navigator
+          .share({
+            title: brandName,
+            text: bio,
+            url: window.location.href,
+          })
+          .catch(() => {
+            navigator.clipboard.writeText(window.location.href);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+          });
+      } else {
+        navigator.clipboard.writeText(window.location.href);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }
+    }
+  };
 
   return (
     <div className="flex flex-col items-center text-center pt-10 pb-4 px-4 w-full max-w-lg mx-auto animate-fade-in-up">
@@ -106,8 +131,15 @@ export default function ProfileHeader({
         {brandName}
       </h1>
 
-      {/* Username pill with Online indicator */}
-      <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full glass-card text-[11px] text-slate-300 mb-2">
+      {/* Bio Description */}
+      {bio && (
+        <p className="text-xs sm:text-sm text-slate-300 max-w-sm mb-3 font-medium leading-relaxed">
+          {bio}
+        </p>
+      )}
+
+      {/* Username pill with Online indicator & Quick Share */}
+      <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-card text-[11px] text-slate-300 mb-2 border border-white/[0.08]">
         <span className="font-semibold">{username}</span>
         <span className="w-[1px] h-3 bg-white/10" />
         <span className="flex items-center gap-1">
@@ -117,6 +149,15 @@ export default function ProfileHeader({
           </span>
           <span className="text-[10px] text-emerald-400 font-semibold">Online</span>
         </span>
+        <span className="w-[1px] h-3 bg-white/10" />
+        <button
+          onClick={handleShare}
+          className="inline-flex items-center gap-1 text-[10px] font-semibold text-indigo-300 hover:text-white transition-colors"
+          title="Share Bio Page"
+        >
+          {copied ? <Check className="w-3 h-3 text-emerald-400" /> : <Share2 className="w-3 h-3" />}
+          <span>{copied ? "কপি হয়েছে" : "Share"}</span>
+        </button>
       </div>
 
       {/* Platform-branded page header for extra pages */}
@@ -126,7 +167,6 @@ export default function ProfileHeader({
           style={{ animationDelay: "100ms" }}
         >
           <div className="flex items-center gap-3">
-            {/* Platform icon — bigger, clear */}
             <div className="w-11 h-11 rounded-xl bg-black/20 flex items-center justify-center flex-shrink-0">
               <DynamicIcon name={pageIcon || platform.icon} className="w-7 h-7" size={28} />
             </div>

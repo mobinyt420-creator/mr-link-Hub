@@ -104,7 +104,7 @@ export default function AdminLinksPage() {
   };
 
   const handleSave = async () => {
-    if (!form.title || !form.url) {
+    if (!form.title.trim() || !form.url.trim()) {
       setError("Title and URL are required.");
       return;
     }
@@ -112,6 +112,17 @@ export default function AdminLinksPage() {
     setError("");
 
     try {
+      let cleanUrl = form.url.trim();
+      if (!/^https?:\/\//i.test(cleanUrl) && !/^(mailto|tel):/i.test(cleanUrl)) {
+        cleanUrl = `https://${cleanUrl}`;
+      }
+
+      const payload = {
+        ...form,
+        title: form.title.trim(),
+        url: cleanUrl,
+      };
+
       const url = editingLink
         ? `/api/admin/links/${editingLink.id}`
         : "/api/admin/links";
@@ -120,7 +131,7 @@ export default function AdminLinksPage() {
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
@@ -132,7 +143,7 @@ export default function AdminLinksPage() {
       setShowModal(false);
       fetchLinks();
     } catch {
-      setError("Network error.");
+      setError("Network error. Please try again.");
     } finally {
       setSaving(false);
     }

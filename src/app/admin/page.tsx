@@ -12,8 +12,12 @@ import {
   Loader2,
   BarChart3,
   Zap,
+  Globe,
+  Copy,
+  Check,
 } from "lucide-react";
 import { DynamicIcon } from "@/lib/icons";
+import { useAuth } from "@/context/AuthContext";
 
 interface Stats {
   totalLinks: number;
@@ -29,8 +33,17 @@ interface Stats {
 }
 
 export default function AdminDashboard() {
+  const { creatorProfile, user: firebaseUser } = useAuth();
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [origin, setOrigin] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setOrigin(window.location.origin);
+    }
+  }, []);
 
   useEffect(() => {
     fetch("/api/admin/stats")
@@ -41,6 +54,17 @@ export default function AdminDashboard() {
       })
       .catch(() => setLoading(false));
   }, []);
+
+  const username = creatorProfile?.username || firebaseUser?.email?.split("@")[0] || "mobin";
+  const liveBase = origin || "https://mr-link-Hub.vercel.app";
+  const liveBioUrl = `${liveBase}/u/${username}`;
+  const displayHost = liveBase.replace(/^https?:\/\//, "");
+
+  const handleCopyBio = () => {
+    navigator.clipboard.writeText(liveBioUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   if (loading) {
     return (
@@ -98,7 +122,7 @@ export default function AdminDashboard() {
   ];
 
   return (
-    <div className="space-y-8 max-w-6xl">
+    <div className="space-y-6 max-w-6xl">
       {/* Page Header */}
       <div>
         <h1 className="text-2xl font-bold text-white tracking-tight flex items-center gap-2.5">
@@ -106,6 +130,49 @@ export default function AdminDashboard() {
           Dashboard
         </h1>
         <p className="text-sm text-slate-400 mt-1">Overview of your LinkHub performance</p>
+      </div>
+
+      {/* Live Bio Link Card Banner */}
+      <div className="rounded-2xl bg-gradient-to-r from-indigo-950/50 via-[#0e1324] to-cyan-950/40 border border-indigo-500/20 p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xl shadow-indigo-950/30">
+        <div className="flex items-center gap-3.5">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-cyan-400 p-0.5 flex-shrink-0 shadow-lg shadow-indigo-500/20">
+            <div className="w-full h-full bg-[#0c101c] rounded-[10px] flex items-center justify-center">
+              <Globe className="w-6 h-6 text-cyan-400" />
+            </div>
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-white uppercase tracking-wider">আপনার লাইভ প্রোফাইল লিঙ্ক</span>
+              <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono font-bold">ONLINE</span>
+            </div>
+            <p className="text-sm font-mono text-indigo-300 mt-0.5 select-all">
+              {displayHost}/u/{username}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          <button
+            onClick={handleCopyBio}
+            className={`flex-1 sm:flex-initial px-4 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all ${
+              copied
+                ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                : "bg-white text-slate-900 hover:bg-slate-100 shadow-md"
+            }`}
+          >
+            {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4 text-slate-900" />}
+            <span>{copied ? "কপি হয়েছে!" : "লিঙ্ক কপি করুন"}</span>
+          </button>
+          <a
+            href={`/u/${username}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-4 py-2.5 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/50 border border-indigo-500/30 text-indigo-200 text-xs font-bold flex items-center justify-center gap-1.5 transition-all"
+          >
+            <span>ভিজিট করুন</span>
+            <ExternalLink className="w-3.5 h-3.5" />
+          </a>
+        </div>
       </div>
 
       {/* Stat Cards */}
@@ -160,13 +227,13 @@ export default function AdminDashboard() {
           Site Settings
         </Link>
         <a
-          href="/"
+          href={`/u/${username}`}
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-sm font-medium hover:bg-emerald-500/15 transition-all"
         >
           <Eye className="w-4 h-4" />
-          View Live Site
+          View Live Bio
         </a>
       </div>
 
